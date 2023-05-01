@@ -4,17 +4,19 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import Navbar from "./components/Navbar"
 import Content from "./components/Content"
 import Sidebar from "./components/Sidebar"
-
+import Login from "./components/Login"
 
 function App() {
 
   return (
-    <Box sx={{backgroundColor:"none "}}>
-      <Navbar />
+    <Box>
+      {/* <Navbar />
       <Stack direction="row" spacing={2} justifyContent="space-between">
         <Sidebar />
         <Content />
-      </Stack>
+      </Stack> */}
+
+      <Login />
     </Box>
   );
 }

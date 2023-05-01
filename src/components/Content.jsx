@@ -81,9 +81,9 @@ const Content = () => {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Age</TableCell>
-              <TableCell>City</TableCell>
+              <TableCell>TokpedOrderID</TableCell>
+              <TableCell>Creation Date</TableCell>
+              <TableCell>TokpedStatus</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
