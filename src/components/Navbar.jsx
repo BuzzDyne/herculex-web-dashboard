@@ -1,4 +1,4 @@
-import { AccountCircle, Notifications } from '@mui/icons-material'
+import { Notifications } from '@mui/icons-material'
 import { AppBar, Avatar, Badge, Box, InputBase, Menu, MenuItem, Toolbar, Typography, styled } from '@mui/material'
 import React, { useState } from 'react'
 
@@ -39,7 +39,7 @@ const Navbar = () => {
     <AppBar position="sticky">
       <StyledToolbar>
         <Typography variant="h6" sx={{display:{xs:"none", sm:"block"}}}>HerculexWeb</Typography>
-        <Typography variant="h6" sx={{display:{xs:"block", sm:"none"}}}> HW</Typography>
+        <Typography variant="h6" sx={{display:{xs:"block", sm:"none"}}}>HW</Typography>
         <Search>
           <InputBase placeholder='OrderID (#23XXX)'/>
         </Search>
@@ -82,8 +82,7 @@ const Navbar = () => {
           horizontal: 'right',
         }}
       >
-        <MenuItem>Profile</MenuItem>
-        <MenuItem>My account</MenuItem>
+        <MenuItem>My Profile</MenuItem>
         <MenuItem>Logout</MenuItem>
       </Menu>
     </AppBar>
