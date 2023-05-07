@@ -1,5 +1,5 @@
-import { Container, TextField, Button, Typography, Box } from '@mui/material'
-import React, { useRef, useState, useEffect, useContext } from 'react'
+import { Container, TextField, Button, Typography, Alert, AlertTitle } from '@mui/material'
+import React, { useState, useEffect, useContext } from 'react'
 import AuthContext from '../context/AuthProvider'
 import axios from '../api/axios'
 
@@ -7,17 +7,11 @@ const LOGIN_URL = '/auth/login'
 
 const Login = () => {
   const { setAuth } = useContext(AuthContext);
-  const userRef = useRef()
-  const errRef  = useRef()
 
   const [username, setUsername] = useState('');
   const [pwd, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
   const [success, setSuccess] = useState(false);
-
-  useEffect(() => {
-    userRef.current.focus();
-  }, []);
 
   useEffect(() => {
     setErrMsg('')
@@ -53,8 +47,6 @@ const Login = () => {
       } else {
         setErrMsg("Something went wrong...")
       }
-
-      errRef.current.focus()
     }
 
 
@@ -71,7 +63,6 @@ const Login = () => {
           <TextField
             label="Username"
             value={username}
-            ref={userRef}
             autoComplete='off'
             onChange={(event) => setUsername(event.target.value)}
             sx={{ margin: 1, width: '100%' }}
@@ -91,10 +82,16 @@ const Login = () => {
             color="primary"
             type="submit"
             sx={{ margin: 2, width: '100%' }}
-          >Login</Button>
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p>
+          >Login
+          </Button>
+          {/* <p className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p> */}
         </form>
-        <>{success ? "True" : "False"}</>
+        {errMsg && (
+          <Alert severity="error">
+            <AlertTitle>Error</AlertTitle>
+            {errMsg}
+          </Alert>
+        )}
     </Container>
   )
 }
