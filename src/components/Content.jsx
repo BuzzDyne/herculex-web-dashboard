@@ -74,7 +74,7 @@ const Content = () => {
   }, []);
 
   return (
-    <Box bgcolor="skyblue" flex={6} p={2}>
+    <>
       Text
       <TableContainer component={Paper}>
         <Table>
@@ -125,7 +125,7 @@ const Content = () => {
           </TableBody>
         </Table>
       </TableContainer>
-    </Box>
+    </>
   )
 }
 

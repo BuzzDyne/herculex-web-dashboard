@@ -1,17 +1,24 @@
 import { Container, TextField, Button, Typography, Alert, AlertTitle } from '@mui/material'
-import React, { useState, useEffect, useContext } from 'react'
-import AuthContext from '../context/AuthProvider'
+import React, { useState, useEffect } from 'react'
 import axios from '../api/axios'
+import useAuth from '../hooks/useAuth'
+import jwt_decode from 'jwt-decode'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
+
+
 
 const LOGIN_URL = '/auth/login'
 
 const Login = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth();
+
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || "/"
 
   const [username, setUsername] = useState('');
   const [pwd, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     setErrMsg('')
@@ -29,23 +36,29 @@ const Login = () => {
         }
       )
 
-      console.log(JSON.stringify(response?.data))
+      console.log(response)
 
-      const accessToken = response?.data?.accessToken
-      // const roles = response?.data?.roles
+      const accessToken = response?.data?.access_token
 
-      setAuth({accessToken})
+      const decodedData = jwt_decode(accessToken)
+
+      const token_username    = decodedData.sub 
+      const token_role_id     = decodedData.role_id
+
+      setAuth({token_username, token_role_id, accessToken})
 
       setUsername('')
       setPwd('')
-      setSuccess(true)
+      navigate(from, { replace: true })
     } catch (err) {
       if (!err?.response) {
         setErrMsg('No Server Response')
+        console.log(err)
       } else if (err.response.status === 400) {
-        setErrMsg("Unauthorized")
+        setErrMsg(err.response.data.detail)
       } else {
         setErrMsg("Something went wrong...")
+        console.log(err)
       }
     }
 
@@ -54,44 +67,46 @@ const Login = () => {
 
   return (
     <Container>
-        <Typography variant="h3" align="center" sx={{ margin: '2rem' }}>
-          HerculexWeb
-        </Typography>
-        <form
-          onSubmit={handleSubmit} 
-          sx={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin: 'auto',width: '50%'}}>
-          <TextField
-            label="Username"
-            value={username}
-            autoComplete='off'
-            onChange={(event) => setUsername(event.target.value)}
-            sx={{ margin: 1, width: '100%' }}
-            required
-          />
-          <TextField
-            label="Password"
-            type="password"
-            value={pwd}
-            autoComplete='off'
-            onChange={(event) => setPwd(event.target.value)}
-            sx={{ margin: 1, width: '100%' }}
-            required
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            type="submit"
-            sx={{ margin: 2, width: '100%' }}
-          >Login
-          </Button>
-          {/* <p className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p> */}
-        </form>
-        {errMsg && (
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            {errMsg}
-          </Alert>
-        )}
+      <Typography variant="h3" align="center" sx={{ margin: '2rem' }}>
+        HerculexWeb
+      </Typography>
+      <form
+        onSubmit={handleSubmit} 
+        sx={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin: 'auto',width: '50%'}}>
+        <TextField
+          label="Username"
+          value={username}
+          autoComplete='off'
+          onChange={(event) => setUsername(event.target.value)}
+          sx={{ margin: 1, width: '100%' }}
+          required
+        />
+        <TextField
+          label="Password"
+          type="password"
+          value={pwd}
+          autoComplete='off'
+          onChange={(event) => setPwd(event.target.value)}
+          sx={{ margin: 1, width: '100%' }}
+          required
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          sx={{ margin: 2, width: '100%' }}
+        >Login
+        </Button>
+        {/* <p className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p> */}
+      </form>
+      {errMsg && (
+        <Alert severity="error">
+          <AlertTitle>Error</AlertTitle>
+          {errMsg}
+        </Alert>
+      )}
+
+
     </Container>
   )
 }

@@ -1,23 +1,27 @@
 import { Box, Stack } from "@mui/material"
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import RequireAuth from "./components/RequireAuth"
+import { BrowserRouter as Router, Switch, Routes, Route, Redirect } from 'react-router-dom'
 
-import Navbar from "./components/Navbar"
-import Content from "./components/Content"
-import Sidebar from "./components/Sidebar"
 import Login from "./components/Login"
+import DashboardLayout from "./components/DashboardLayout";
+import Content from "./components/Content";
 
 function App() {
 
   return (
-    <Box>
-      {/* <Navbar />
-      <Stack direction="row" spacing={2} justifyContent="space-between">
-        <Sidebar />
-        <Content />
-      </Stack> */}
+    <Routes>
+      <Route path="login" element={<Login />} />
 
-      <Login />
-    </Box>
+      <Route element={<RequireAuth />}>
+        <Route path="/" element={<DashboardLayout />}>
+          <Route path="/admin" element={"Admin"} />
+          <Route path="/designer" element={"designer"} />
+          <Route path="/printer" element={"printer"} />
+          <Route path="/packer" element={"packer"} />
+          <Route path="/" element={<Content />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 
