@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import axios from '../api/axios'
 import useAuth from '../hooks/useAuth'
 import jwt_decode from 'jwt-decode'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 
 
@@ -32,20 +32,21 @@ const Login = () => {
         JSON.stringify({username, password: pwd}),
         {
           headers: {'Content-Type': 'application/json'},
-          withCredentials: true
+          // withCredentials: true
         }
       )
 
       console.log(response)
 
       const accessToken = response?.data?.access_token
+      const refreshToken = response?.data?.refresh_token
 
       const decodedData = jwt_decode(accessToken)
 
       const token_username    = decodedData.sub 
       const token_role_id     = decodedData.role_id
 
-      setAuth({token_username, token_role_id, accessToken})
+      setAuth({token_username, token_role_id, accessToken, refreshToken})
 
       setUsername('')
       setPwd('')

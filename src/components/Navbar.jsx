@@ -1,6 +1,8 @@
 import { Notifications } from '@mui/icons-material'
 import { AppBar, Avatar, Badge, Box, InputBase, Menu, MenuItem, Toolbar, Typography, styled } from '@mui/material'
 import React, { useState } from 'react'
+import useAuth from '../hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -32,8 +34,18 @@ const UserBox = styled(Box)(({ theme }) => ({
   }
 }))
 
+
+
 const Navbar = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
+  const { setAuth } = useAuth()
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    setAuth({})
+    alert('Successfuly logged out!')
+    navigate('/login', { replace: true})   
+  }
 
   return (
     <AppBar position="sticky">
@@ -83,7 +95,7 @@ const Navbar = () => {
         }}
       >
         <MenuItem>My Profile</MenuItem>
-        <MenuItem>Logout</MenuItem>
+        <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
       </Menu>
     </AppBar>
   )

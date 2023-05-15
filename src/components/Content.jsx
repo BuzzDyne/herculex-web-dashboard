@@ -1,4 +1,4 @@
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material'
 import { React, useEffect, useState} from 'react'
 import axios from '../api/axios'
 
@@ -32,6 +32,7 @@ const Content = () => {
 
   return (
     <>
+      <Typography variant="h5">Home</Typography>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

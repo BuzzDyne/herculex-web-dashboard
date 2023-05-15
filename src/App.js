@@ -1,10 +1,10 @@
-import { Box, Stack } from "@mui/material"
 import RequireAuth from "./components/RequireAuth"
-import { BrowserRouter as Router, Switch, Routes, Route, Redirect } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 
 import Login from "./components/Login"
 import DashboardLayout from "./components/DashboardLayout";
 import Content from "./components/Content";
+import UserManagement from "./components/UserManagement";
 
 const ROLES = {
   'Admin'   : 1,
@@ -22,6 +22,7 @@ function App() {
       <Route path="/" element={<DashboardLayout />}>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="/admin" element={"Admin"} />
+          <Route path="/user_management" element={<UserManagement />} />          
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Designer]}/>}>
