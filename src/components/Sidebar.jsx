@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 
 const Sidebar = () => {
-  const { auth, setAuth } = useAuth()
+  const { auth } = useAuth()
 
   return (
     <Box 
