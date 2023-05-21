@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogContent, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import useAxiosPrivate from "../hooks/useAxiosPrivate"
 import { useNavigate, useLocation } from "react-router-dom"
@@ -6,14 +6,21 @@ import { DeleteOutline, Edit } from "@mui/icons-material"
 
 function UserManagement() {
   const [users, setUsers] = useState()
-  const [openDialog, setOpenDialog] = useState(false)
+  const [isOpenRegisDialog, setIsOpenRegisDialog] = useState(false)
   const [newUser, setNewUser] = useState({
     username: "",
     password: "",
     confirmPassword: "",
     role: "",
   });
+  const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
+  const [deleteDialogData, setDeleteDialogData] = useState({
+    id: "",
+    username: ""
+  });
+  const [numberSubmitted, setNumberSubmitted] = useState(0);
   const [formErrors, setFormErrors] = useState({});
+
   
 
   const axiosPrivate = useAxiosPrivate()
@@ -30,9 +37,7 @@ function UserManagement() {
         const response = await axiosPrivate.get('/api_user/get_list', {
           signal: controller.signal
         })
-  
         console.log(response.data)
-  
         isMounted && setUsers(response.data)
       } catch (err) {
         console.log(err)
@@ -50,7 +55,7 @@ function UserManagement() {
       controller.abort()
     }
 
-  }, [axiosPrivate, navigate, location]);
+  }, [axiosPrivate, navigate, location, numberSubmitted]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString)
@@ -58,11 +63,23 @@ function UserManagement() {
   }
 
   const openRegisDialog = () => {
-    setOpenDialog(true)
+    setIsOpenRegisDialog(true)
   }
 
   const closeRegisDialog = () => {
-    setOpenDialog(false)
+    setIsOpenRegisDialog(false)
+  }
+
+  const openDeleteDialog = () => {
+    setIsOpenDeleteDialog(true)
+  }
+
+  const closeDeleteDialog = () => {
+    setIsOpenDeleteDialog(false)
+  }
+
+  const incrementNumberSubmitted = () => {
+    setNumberSubmitted(numberSubmitted => numberSubmitted + 1);
   }
 
   const handleFormInputChange = (event) => {
@@ -71,7 +88,7 @@ function UserManagement() {
   };
   
   // Handle form submission
-  const handleFormSubmit = (event) => {
+  const handleFormSubmit = async (event) => {
     event.preventDefault();
   
     // Validate form inputs
@@ -94,22 +111,69 @@ function UserManagement() {
   
     // If there are no errors, proceed with user registration
     if (Object.keys(errors).length === 0) {
-      // Perform user registration logic here
-      console.log("Registering user:", newUser);
-      
+      try {
+      const response = await axiosPrivate.post('/auth/signup', {
+        username: newUser.username,
+        password: newUser.password,
+        rolename: newUser.role.toLowerCase()
+      });
 
+      console.log(response.data);
+      
       // Reset form
       setNewUser({
         username: "",
         password: "",
         confirmPassword: "",
-        role: "",
+        role: ""
       });
+
       // Close the registration dialog
       closeRegisDialog();
+
+      incrementNumberSubmitted()
+    } catch (err) {
+      console.log(err);
+      alert(err)
+    }
     }
   }
 
+  const updateDeleteDialogData = (newData) => {
+    setDeleteDialogData(newData);
+  }
+
+  const handleDeleteButtonClick = (id, username) => {
+    // update the state of the Delete Dialog
+    const toBeDeletedData = {
+      id: id,
+      username: username
+    }
+
+    updateDeleteDialogData(toBeDeletedData)
+
+
+    console.log(deleteDialogData)
+    // show the delete dialog
+    openDeleteDialog()
+
+  }
+
+  const handleDeleteConfirmation = async () => {
+    try {
+      const response = await axiosPrivate.delete(`/api_user/id/${deleteDialogData.id}`);
+
+      console.log(response.data);
+      
+      // Close the registration dialog
+      closeDeleteDialog();
+
+      incrementNumberSubmitted()
+    } catch (err) {
+      console.log(err);
+      alert(err)
+    }
+  }
 
   return (
     <>
@@ -136,7 +200,7 @@ function UserManagement() {
                       <Edit/>
                     </IconButton>
                     <IconButton color="error">
-                      <DeleteOutline/>
+                      <DeleteOutline onClick={() => handleDeleteButtonClick(user.id, user.username)}/>
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -145,7 +209,7 @@ function UserManagement() {
         </Table>
       </TableContainer>
 
-      <Dialog open={openDialog} onClose={closeRegisDialog}>
+      <Dialog open={isOpenRegisDialog} onClose={closeRegisDialog}>
         <DialogContent>
           <Typography variant="h6">Register New User</Typography>
           <form onSubmit={handleFormSubmit}>
@@ -210,6 +274,20 @@ function UserManagement() {
         </DialogContent>
       </Dialog>
 
+      <Dialog open={isOpenDeleteDialog} onClose={closeDeleteDialog}>
+        <DialogTitle>Delete User</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to delete "{deleteDialogData.username}"?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog}>No</Button>
+          <Button onClick={handleDeleteConfirmation} color="error" autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
