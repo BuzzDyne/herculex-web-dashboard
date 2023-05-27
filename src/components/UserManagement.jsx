@@ -18,6 +18,14 @@ function UserManagement() {
     id: "",
     username: ""
   });
+  const [isOpenEditDialog, setIsOpenEditDialog] = useState(false);
+  const [editDialogData, setEditDialogData] = useState({
+    id: "",
+    username: "",
+    created_dt: "",
+    last_login_dt: "",
+    role_name: "",
+  });
   const [numberSubmitted, setNumberSubmitted] = useState(0);
   const [formErrors, setFormErrors] = useState({});
 
@@ -62,6 +70,17 @@ function UserManagement() {
     return date.toLocaleString()
   }
 
+  const getUserData = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`/api_user/id/${id}`);
+      const userData = response.data;
+      setEditDialogData(userData);
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
+  };
+
   const openRegisDialog = () => {
     setIsOpenRegisDialog(true)
   }
@@ -78,6 +97,14 @@ function UserManagement() {
     setIsOpenDeleteDialog(false)
   }
 
+  const openEditDialog = () => {
+    setIsOpenEditDialog(true);
+  };
+  
+  const closeEditDialog = () => {
+    setIsOpenEditDialog(false);
+  };
+
   const incrementNumberSubmitted = () => {
     setNumberSubmitted(numberSubmitted => numberSubmitted + 1);
   }
@@ -88,7 +115,7 @@ function UserManagement() {
   };
   
   // Handle form submission
-  const handleFormSubmit = async (event) => {
+  const handleRegisFormSubmit = async (event) => {
     event.preventDefault();
   
     // Validate form inputs
@@ -159,6 +186,11 @@ function UserManagement() {
 
   }
 
+  const handleEditButtonClick = (id) => {
+    getUserData(id)
+    openEditDialog()
+  }
+
   const handleDeleteConfirmation = async () => {
     try {
       const response = await axiosPrivate.delete(`/api_user/id/${deleteDialogData.id}`);
@@ -178,7 +210,7 @@ function UserManagement() {
   return (
     <>
       <Typography variant="h5">User Management</Typography>
-      <Button variant="contained" color="success" onClick={openRegisDialog}>New User</Button>
+      <Button variant="contained" color="success" onClick={openRegisDialog}>+</Button>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -197,11 +229,13 @@ function UserManagement() {
                   <TableCell>{formatDate(user.created_dt)}</TableCell>
                   <TableCell>
                     <IconButton color="info">
-                      <Edit/>
+                      <Edit onClick={() => handleEditButtonClick(user.id)}/>
                     </IconButton>
-                    <IconButton color="error">
-                      <DeleteOutline onClick={() => handleDeleteButtonClick(user.id, user.username)}/>
-                    </IconButton>
+                    {user.username !== 'admin' && (
+                      <IconButton color="error">
+                        <DeleteOutline onClick={() => handleDeleteButtonClick(user.id, user.username)} />
+                      </IconButton>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -212,7 +246,7 @@ function UserManagement() {
       <Dialog open={isOpenRegisDialog} onClose={closeRegisDialog}>
         <DialogContent>
           <Typography variant="h6">Register New User</Typography>
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={handleRegisFormSubmit}>
             <TextField
               label="Username"
               name="username"
@@ -285,6 +319,64 @@ function UserManagement() {
           <Button onClick={closeDeleteDialog}>No</Button>
           <Button onClick={handleDeleteConfirmation} color="error" autoFocus>
             Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={isOpenEditDialog} onClose={closeEditDialog}>
+        <DialogTitle>Edit User</DialogTitle>
+        <DialogContent>
+          <Typography>Username: {editDialogData.username}</Typography>
+          <Typography>Created Date: {formatDate(editDialogData.created_dt)}</Typography>
+          <Typography>Last Login Date: {formatDate(editDialogData.last_login_dt)}</Typography>
+          <FormControl fullWidth required margin="normal">
+            <InputLabel id="edit-role-label">Role</InputLabel>
+            <Select
+              labelId="edit-role-label"
+              id="edit-role"
+              name="edit-role"
+              value={editDialogData.role_name}
+              onChange={handleFormInputChange}
+            >
+              <MenuItem value="">Select Role</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+              <MenuItem value="designer">Designer</MenuItem>
+              <MenuItem value="printer">Printer</MenuItem>
+              <MenuItem value="packer">Packer</MenuItem>
+            </Select>
+            {!!formErrors.role && <FormHelperText>{formErrors.role}</FormHelperText>}
+          </FormControl>
+          <TextField
+            label="Password"
+            name="edit-password"
+            value={newUser.password}
+            onChange={handleFormInputChange}
+            type="password"
+            error={!!formErrors.password}
+            helperText={formErrors.password}
+            fullWidth
+            required
+            margin="normal"
+          />
+          <TextField
+            label="Re-enter Password"
+            name="edit-confirmPassword"
+            value={newUser.confirmPassword}
+            onChange={handleFormInputChange}
+            type="password"
+            error={!!formErrors.confirmPassword}
+            helperText={formErrors.confirmPassword}
+            fullWidth
+            required
+            margin="normal"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button color="primary" onClick={closeEditDialog}>
+            Cancel
+          </Button>
+          <Button color="primary">
+            Submit
           </Button>
         </DialogActions>
       </Dialog>

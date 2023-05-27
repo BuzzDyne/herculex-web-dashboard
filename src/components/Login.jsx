@@ -79,7 +79,7 @@ const Login = () => {
           value={username}
           autoComplete='off'
           onChange={(event) => setUsername(event.target.value)}
-          sx={{ margin: 1, width: '100%' }}
+          sx={{ width: '100%', marginBottom: 1 }}
           required
         />
         <TextField
@@ -88,14 +88,14 @@ const Login = () => {
           value={pwd}
           autoComplete='off'
           onChange={(event) => setPwd(event.target.value)}
-          sx={{ margin: 1, width: '100%' }}
+          sx={{ width: '100%', marginBottom: 1 }}
           required
         />
         <Button
           variant="contained"
           color="primary"
           type="submit"
-          sx={{ margin: 2, width: '100%' }}
+          sx={{ width: '100%', marginBottom: 1 }}
         >Login
         </Button>
         {/* <p className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p> */}

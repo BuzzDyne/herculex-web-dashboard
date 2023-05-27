@@ -62,14 +62,12 @@ const Navbar = () => {
           <Badge badgeContent={1} color="error">
             <Notifications />
           </Badge>
-          <Badge badgeContent={1} color="error">
-            <Avatar 
-              sx={{width: 30, height: 30}}
-              alt="John Doe" 
-              src="/static"
-              onClick={e => setOpen(true)}
-              />
-          </Badge>
+          <Avatar 
+            sx={{width: 30, height: 30}}
+            alt="John Doe" 
+            src="/static"
+            onClick={e => setOpen(true)}
+            />
         </ProfileIcon>
         <UserBox onClick={e => setOpen(true)}>
           <Avatar 
