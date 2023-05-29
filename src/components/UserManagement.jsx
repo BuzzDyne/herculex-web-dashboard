@@ -25,6 +25,8 @@ function UserManagement() {
     created_dt: "",
     last_login_dt: "",
     role_name: "",
+    edit_password: "",
+    edit_confirmPassword: "",
   });
   const [numberSubmitted, setNumberSubmitted] = useState(0);
   const [formErrors, setFormErrors] = useState({});
@@ -113,6 +115,17 @@ function UserManagement() {
     const { name, value } = event.target;
     setNewUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
+
+  const handleEditFormInputChange = (event) => {
+    const { name, value } = event.target;
+    setEditDialogData((prevData) => {
+      console.log(prevData);
+      console.log(name, value);
+      return  {...prevData,[name]: value,}
+    
+    });
+    console.log(editDialogData);
+  };
   
   // Handle form submission
   const handleRegisFormSubmit = async (event) => {
@@ -187,8 +200,8 @@ function UserManagement() {
   }
 
   const handleEditButtonClick = (id) => {
-    getUserData(id)
     openEditDialog()
+    getUserData(id)
   }
 
   const handleDeleteConfirmation = async () => {
@@ -204,6 +217,49 @@ function UserManagement() {
     } catch (err) {
       console.log(err);
       alert(err)
+    }
+  }
+
+  const handleEditConfirmation = async () => {
+    // Validate form inputs
+    const errors = {};
+    if (!editDialogData.edit_password && editDialogData.edit_password.length < 4) {
+      errors.password = "Password must be at least 4 characters long.";
+    }
+    if (!editDialogData.edit_password && editDialogData.edit_password !== editDialogData.edit_confirmPassword) {
+      errors.confirmPassword = "Passwords do not match.";
+    }
+  
+    // Set form errors, if any
+    setFormErrors(errors);
+  
+    // If there are no errors, proceed with user edit
+    if (Object.keys(errors).length === 0) {
+      try {
+        // Make the API request to update the user
+        const response = await axiosPrivate.patch(`/api_user/id/${editDialogData.id}`, {
+          password: editDialogData.edit_password,
+          role_name: editDialogData.role_name.toLowerCase(),
+        });
+  
+        console.log(response.data);
+  
+        // Reset form
+        setEditDialogData({
+          edit_password: "",
+          edit_confirmPassword: "",
+        });
+
+        alert("Changes saved successfully!")
+  
+        // Close the edit dialog
+        closeEditDialog();
+  
+        incrementNumberSubmitted();
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
     }
   }
 
@@ -228,12 +284,12 @@ function UserManagement() {
                   <TableCell>{user.role_name}</TableCell>
                   <TableCell>{formatDate(user.created_dt)}</TableCell>
                   <TableCell>
-                    <IconButton color="info">
-                      <Edit onClick={() => handleEditButtonClick(user.id)}/>
+                    <IconButton color="info" onClick={() => handleEditButtonClick(user.id)}>
+                      <Edit />
                     </IconButton>
                     {user.username !== 'admin' && (
-                      <IconButton color="error">
-                        <DeleteOutline onClick={() => handleDeleteButtonClick(user.id, user.username)} />
+                      <IconButton color="error" onClick={() => handleDeleteButtonClick(user.id, user.username)}>
+                        <DeleteOutline  />
                       </IconButton>
                     )}
                   </TableCell>
@@ -334,9 +390,9 @@ function UserManagement() {
             <Select
               labelId="edit-role-label"
               id="edit-role"
-              name="edit-role"
+              name="role_name"
               value={editDialogData.role_name}
-              onChange={handleFormInputChange}
+              onChange={handleEditFormInputChange}
             >
               <MenuItem value="">Select Role</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
@@ -348,36 +404,30 @@ function UserManagement() {
           </FormControl>
           <TextField
             label="Password"
-            name="edit-password"
-            value={newUser.password}
-            onChange={handleFormInputChange}
+            name="edit_password"
+            value={editDialogData.edit_password}
+            onChange={handleEditFormInputChange}
             type="password"
             error={!!formErrors.password}
             helperText={formErrors.password}
             fullWidth
-            required
             margin="normal"
           />
           <TextField
             label="Re-enter Password"
-            name="edit-confirmPassword"
-            value={newUser.confirmPassword}
-            onChange={handleFormInputChange}
+            name="edit_confirmPassword"
+            value={editDialogData.edit_confirmPassword}
+            onChange={handleEditFormInputChange}
             type="password"
             error={!!formErrors.confirmPassword}
             helperText={formErrors.confirmPassword}
             fullWidth
-            required
             margin="normal"
           />
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={closeEditDialog}>
-            Cancel
-          </Button>
-          <Button color="primary">
-            Submit
-          </Button>
+          <Button color="primary" onClick={closeEditDialog}>Cancel</Button>
+          <Button color="primary" onClick={handleEditConfirmation}>Submit</Button>
         </DialogActions>
       </Dialog>
     </>
