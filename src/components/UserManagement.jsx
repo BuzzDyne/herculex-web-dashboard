@@ -25,11 +25,12 @@ function UserManagement() {
     created_dt: "",
     last_login_dt: "",
     role_name: "",
+    edit_password: "",
+    edit_confirmPassword: "",
   });
   const [numberSubmitted, setNumberSubmitted] = useState(0);
-  const [formErrors, setFormErrors] = useState({});
-
-  
+  const [regisFormErrors, setRegisFormErrors] = useState({});
+  const [editFormErrors, setEditFormErrors]   = useState({});
 
   const axiosPrivate = useAxiosPrivate()
 
@@ -69,49 +70,62 @@ function UserManagement() {
     const date = new Date(dateString)
     return date.toLocaleString()
   }
-
-  const getUserData = async (id) => {
-    try {
-      const response = await axiosPrivate.get(`/api_user/id/${id}`);
-      const userData = response.data;
-      setEditDialogData(userData);
-    } catch (err) {
-      console.log(err);
-      alert(err);
-    }
-  };
-
-  const openRegisDialog = () => {
-    setIsOpenRegisDialog(true)
-  }
-
-  const closeRegisDialog = () => {
-    setIsOpenRegisDialog(false)
-  }
-
-  const openDeleteDialog = () => {
-    setIsOpenDeleteDialog(true)
-  }
-
-  const closeDeleteDialog = () => {
-    setIsOpenDeleteDialog(false)
-  }
-
-  const openEditDialog = () => {
-    setIsOpenEditDialog(true);
-  };
-  
-  const closeEditDialog = () => {
-    setIsOpenEditDialog(false);
-  };
-
   const incrementNumberSubmitted = () => {
     setNumberSubmitted(numberSubmitted => numberSubmitted + 1);
   }
 
-  const handleFormInputChange = (event) => {
+  const openRegisDialog = () => {
+    setIsOpenRegisDialog(true)
+  }
+  const closeRegisDialog = () => {
+    setIsOpenRegisDialog(false)
+  }
+  const openDeleteDialog = () => {
+    setIsOpenDeleteDialog(true)
+  }
+  const closeDeleteDialog = () => {
+    setIsOpenDeleteDialog(false)
+  }
+  const openEditDialog = () => {
+    setIsOpenEditDialog(true);
+  };
+  const closeEditDialog = () => {
+    setIsOpenEditDialog(false);
+  };
+
+  const handleRegisFormInputChange = (event) => {
     const { name, value } = event.target;
     setNewUser((prevUser) => ({ ...prevUser, [name]: value }));
+  };
+  const handleEditFormInputChange = (event) => {
+    const { name, value } = event.target;
+    setEditDialogData((prevData) => ({ ...prevData,[name]: value }));
+  };
+
+  const getEditUserData = async (id) => {
+    try {
+      const response = await axiosPrivate.get(`/api_user/id/${id}`);
+      const userData = response.data;
+      // {
+      //   'id'            : user.id,
+      //   'username'      : user.username,
+      //   'created_dt'    : user.created_dt,
+      //   'last_login_dt' : user.last_login_dt,
+      //   'role_name'     : user.role_name,
+      // }
+      setEditDialogData(userData);
+      setEditDialogData((prevState) => ({
+        ...prevState,
+        id            : userData.id,
+        username      : userData.username,
+        created_dt    : userData.created_dt,
+        last_login_dt : userData.last_login_dt,
+        role_name     : userData.role_name,
+      }));
+    } catch (err) {
+      console.log(err);
+      alert(err);
+    }
   };
   
   // Handle form submission
@@ -134,7 +148,7 @@ function UserManagement() {
     }
   
     // Set form errors, if any
-    setFormErrors(errors);
+    setRegisFormErrors(errors);
   
     // If there are no errors, proceed with user registration
     if (Object.keys(errors).length === 0) {
@@ -145,8 +159,6 @@ function UserManagement() {
         rolename: newUser.role.toLowerCase()
       });
 
-      console.log(response.data);
-      
       // Reset form
       setNewUser({
         username: "",
@@ -165,32 +177,6 @@ function UserManagement() {
     }
     }
   }
-
-  const updateDeleteDialogData = (newData) => {
-    setDeleteDialogData(newData);
-  }
-
-  const handleDeleteButtonClick = (id, username) => {
-    // update the state of the Delete Dialog
-    const toBeDeletedData = {
-      id: id,
-      username: username
-    }
-
-    updateDeleteDialogData(toBeDeletedData)
-
-
-    console.log(deleteDialogData)
-    // show the delete dialog
-    openDeleteDialog()
-
-  }
-
-  const handleEditButtonClick = (id) => {
-    getUserData(id)
-    openEditDialog()
-  }
-
   const handleDeleteConfirmation = async () => {
     try {
       const response = await axiosPrivate.delete(`/api_user/id/${deleteDialogData.id}`);
@@ -205,6 +191,63 @@ function UserManagement() {
       console.log(err);
       alert(err)
     }
+  }
+  const handleEditConfirmation = async () => {
+    // Validate form inputs
+    const errors = {};
+    if (!editDialogData.edit_password && editDialogData.edit_password.length < 4) {
+      errors.password = "Password must be at least 4 characters long.";
+    }
+    if (!editDialogData.edit_password && editDialogData.edit_password !== editDialogData.edit_confirmPassword) {
+      errors.confirmPassword = "Passwords do not match.";
+    }
+  
+    // Set form errors, if any
+    setEditFormErrors(errors);
+  
+    // If there are no errors, proceed with user edit
+    if (Object.keys(errors).length === 0) {
+      try {
+        // Make the API request to update the user
+        const response = await axiosPrivate.patch(`/api_user/id/${editDialogData.id}`, {
+          password: editDialogData.edit_password,
+          rolename: editDialogData.role_name.toLowerCase(),
+        });
+  
+        // Reset form
+        setEditDialogData({
+          edit_password: "",
+          edit_confirmPassword: "",
+        });
+
+        alert("Changes saved successfully!")
+  
+        // Close the edit dialog
+        closeEditDialog();
+  
+        incrementNumberSubmitted();
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
+    }
+  }
+
+  // Handle form opening
+  const handleDeleteButtonClick = (id, username) => {
+    // update the state of the Delete Dialog
+    const toBeDeletedData = {
+      id: id,
+      username: username
+    }
+
+    setDeleteDialogData(toBeDeletedData);
+    openDeleteDialog()
+
+  }
+  const handleEditButtonClick = (id) => {
+    getEditUserData(id)
+    openEditDialog()
   }
 
   return (
@@ -228,12 +271,12 @@ function UserManagement() {
                   <TableCell>{user.role_name}</TableCell>
                   <TableCell>{formatDate(user.created_dt)}</TableCell>
                   <TableCell>
-                    <IconButton color="info">
-                      <Edit onClick={() => handleEditButtonClick(user.id)}/>
+                    <IconButton color="info" onClick={() => handleEditButtonClick(user.id)}>
+                      <Edit />
                     </IconButton>
                     {user.username !== 'admin' && (
-                      <IconButton color="error">
-                        <DeleteOutline onClick={() => handleDeleteButtonClick(user.id, user.username)} />
+                      <IconButton color="error" onClick={() => handleDeleteButtonClick(user.id, user.username)}>
+                        <DeleteOutline  />
                       </IconButton>
                     )}
                   </TableCell>
@@ -251,9 +294,9 @@ function UserManagement() {
               label="Username"
               name="username"
               value={newUser.username}
-              onChange={handleFormInputChange}
-              error={!!formErrors.username}
-              helperText={formErrors.username}
+              onChange={handleRegisFormInputChange}
+              error={!!regisFormErrors.username}
+              helperText={regisFormErrors.username}
               fullWidth
               required
               margin="normal"
@@ -262,10 +305,10 @@ function UserManagement() {
               label="Password"
               name="password"
               value={newUser.password}
-              onChange={handleFormInputChange}
+              onChange={handleRegisFormInputChange}
               type="password"
-              error={!!formErrors.password}
-              helperText={formErrors.password}
+              error={!!regisFormErrors.password}
+              helperText={regisFormErrors.password}
               fullWidth
               required
               margin="normal"
@@ -274,22 +317,22 @@ function UserManagement() {
               label="Re-enter Password"
               name="confirmPassword"
               value={newUser.confirmPassword}
-              onChange={handleFormInputChange}
+              onChange={handleRegisFormInputChange}
               type="password"
-              error={!!formErrors.confirmPassword}
-              helperText={formErrors.confirmPassword}
+              error={!!regisFormErrors.confirmPassword}
+              helperText={regisFormErrors.confirmPassword}
               fullWidth
               required
               margin="normal"
             />
-            <FormControl error={!!formErrors.role} fullWidth required margin="normal">
+            <FormControl error={!!regisFormErrors.role} fullWidth required margin="normal">
               <InputLabel id="role-label">Role</InputLabel>
               <Select
                 labelId="role-label"
                 id="role"
                 name="role"
                 value={newUser.role}
-                onChange={handleFormInputChange}
+                onChange={handleRegisFormInputChange}
               >
                 <MenuItem value="">Select Role</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
@@ -297,8 +340,8 @@ function UserManagement() {
                 <MenuItem value="printer">Printer</MenuItem>
                 <MenuItem value="packer">Packer</MenuItem>
               </Select>
-              {!!formErrors.role && (
-                <FormHelperText>{formErrors.role}</FormHelperText>
+              {!!regisFormErrors.role && (
+                <FormHelperText>{regisFormErrors.role}</FormHelperText>
               )}
             </FormControl>
             <Button type="submit" variant="contained" color="primary">
@@ -334,9 +377,9 @@ function UserManagement() {
             <Select
               labelId="edit-role-label"
               id="edit-role"
-              name="edit-role"
+              name="role_name"
               value={editDialogData.role_name}
-              onChange={handleFormInputChange}
+              onChange={handleEditFormInputChange}
             >
               <MenuItem value="">Select Role</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
@@ -344,40 +387,33 @@ function UserManagement() {
               <MenuItem value="printer">Printer</MenuItem>
               <MenuItem value="packer">Packer</MenuItem>
             </Select>
-            {!!formErrors.role && <FormHelperText>{formErrors.role}</FormHelperText>}
           </FormControl>
           <TextField
             label="Password"
-            name="edit-password"
-            value={newUser.password}
-            onChange={handleFormInputChange}
+            name="edit_password"
+            value={editDialogData.edit_password}
+            onChange={handleEditFormInputChange}
             type="password"
-            error={!!formErrors.password}
-            helperText={formErrors.password}
+            error={!!editFormErrors.password}
+            helperText={editFormErrors.password}
             fullWidth
-            required
             margin="normal"
           />
           <TextField
             label="Re-enter Password"
-            name="edit-confirmPassword"
-            value={newUser.confirmPassword}
-            onChange={handleFormInputChange}
+            name="edit_confirmPassword"
+            value={editDialogData.edit_confirmPassword}
+            onChange={handleEditFormInputChange}
             type="password"
-            error={!!formErrors.confirmPassword}
-            helperText={formErrors.confirmPassword}
+            error={!!editFormErrors.confirmPassword}
+            helperText={editFormErrors.confirmPassword}
             fullWidth
-            required
             margin="normal"
           />
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={closeEditDialog}>
-            Cancel
-          </Button>
-          <Button color="primary">
-            Submit
-          </Button>
+          <Button color="primary" onClick={closeEditDialog}>Cancel</Button>
+          <Button color="primary" onClick={handleEditConfirmation}>Submit</Button>
         </DialogActions>
       </Dialog>
     </>
