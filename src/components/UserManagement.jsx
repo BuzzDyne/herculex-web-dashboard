@@ -250,49 +250,6 @@ function UserManagement() {
     openEditDialog()
   }
 
-  const handleEditConfirmation = async () => {
-    // Validate form inputs
-    const errors = {};
-    if (!editDialogData.edit_password && editDialogData.edit_password.length < 4) {
-      errors.password = "Password must be at least 4 characters long.";
-    }
-    if (!editDialogData.edit_password && editDialogData.edit_password !== editDialogData.edit_confirmPassword) {
-      errors.confirmPassword = "Passwords do not match.";
-    }
-  
-    // Set form errors, if any
-    setFormErrors(errors);
-  
-    // If there are no errors, proceed with user edit
-    if (Object.keys(errors).length === 0) {
-      try {
-        // Make the API request to update the user
-        const response = await axiosPrivate.patch(`/api_user/id/${editDialogData.id}`, {
-          password: editDialogData.edit_password,
-          role_name: editDialogData.role_name.toLowerCase(),
-        });
-  
-        console.log(response.data);
-  
-        // Reset form
-        setEditDialogData({
-          edit_password: "",
-          edit_confirmPassword: "",
-        });
-
-        alert("Changes saved successfully!")
-  
-        // Close the edit dialog
-        closeEditDialog();
-  
-        incrementNumberSubmitted();
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    }
-  }
-
   return (
     <>
       <Typography variant="h5">User Management</Typography>
