@@ -153,28 +153,28 @@ function UserManagement() {
     // If there are no errors, proceed with user registration
     if (Object.keys(errors).length === 0) {
       try {
-      const response = await axiosPrivate.post('/auth/signup', {
-        username: newUser.username,
-        password: newUser.password,
-        rolename: newUser.role.toLowerCase()
-      });
+        await axiosPrivate.post('/auth/signup', {
+          username: newUser.username,
+          password: newUser.password,
+          rolename: newUser.role.toLowerCase()
+        });
 
-      // Reset form
-      setNewUser({
-        username: "",
-        password: "",
-        confirmPassword: "",
-        role: ""
-      });
+        // Reset form
+        setNewUser({
+          username: "",
+          password: "",
+          confirmPassword: "",
+          role: ""
+        });
 
-      // Close the registration dialog
-      closeRegisDialog();
+        // Close the registration dialog
+        closeRegisDialog();
 
-      incrementNumberSubmitted()
-    } catch (err) {
-      console.log(err);
-      alert(err)
-    }
+        incrementNumberSubmitted()
+      } catch (err) {
+        console.log(err);
+        alert(err)
+      }
     }
   }
   const handleDeleteConfirmation = async () => {
@@ -195,11 +195,14 @@ function UserManagement() {
   const handleEditConfirmation = async () => {
     // Validate form inputs
     const errors = {};
-    if (!editDialogData.edit_password && editDialogData.edit_password.length < 4) {
-      errors.password = "Password must be at least 4 characters long.";
-    }
-    if (!editDialogData.edit_password && editDialogData.edit_password !== editDialogData.edit_confirmPassword) {
-      errors.confirmPassword = "Passwords do not match.";
+
+    if (!editDialogData.edit_password) {
+      if (editDialogData.edit_password?.length < 4) {
+        errors.password = "Password must be at least 4 characters long."
+      }
+      if (editDialogData.edit_password !== editDialogData.edit_confirmPassword) {
+        errors.confirmPassword = "Passwords do not match.";
+      }
     }
   
     // Set form errors, if any
@@ -209,15 +212,21 @@ function UserManagement() {
     if (Object.keys(errors).length === 0) {
       try {
         // Make the API request to update the user
-        const response = await axiosPrivate.patch(`/api_user/id/${editDialogData.id}`, {
-          password: editDialogData.edit_password,
+        console.log(editDialogData.edit_password);
+        const payload = {
+          password: editDialogData.edit_password !== undefined ? editDialogData.edit_password : '',
           rolename: editDialogData.role_name.toLowerCase(),
-        });
-  
+        }
+        console.log(payload);
+        const response = await axiosPrivate.patch(`/api_user/id/${editDialogData.id}`, payload);
+        
+        console.log(response);
+
         // Reset form
         setEditDialogData({
           edit_password: "",
           edit_confirmPassword: "",
+          role_name: ""
         });
 
         alert("Changes saved successfully!")
