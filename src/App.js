@@ -5,6 +5,7 @@ import Login from "./components/Login"
 import DashboardLayout from "./components/DashboardLayout";
 import Content from "./components/Content";
 import UserManagement from "./components/UserManagement";
+import OrderDetail from "./components/OrderDetail";
 
 const ROLES = {
   'Admin'   : 1,
@@ -38,6 +39,7 @@ function App() {
         </Route>
 
         <Route element={<RequireAuth allowedRoles={Object.values(ROLES)}/>}>
+          <Route path="/order/:order_id" element={<OrderDetail />} />
           <Route path="/" element={<Content />} />
         </Route>
 

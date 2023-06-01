@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material'
 import { React, useEffect, useState} from 'react'
+import { Link } from 'react-router-dom'
 import axios from '../api/axios'
 
 const Content = () => {
@@ -46,14 +47,7 @@ const Content = () => {
           <TableBody>
             {orders.map((row) => (
               <TableRow key={row.id}>
-                <TableCell 
-                  sx={{
-                    cursor: 'default',
-                    '&:hover': {
-                      cursor: 'pointer',
-                    },
-                  }}
-                  onClick={(e) => alert(`Order ${row.id} is clicked!`)}>
+                <TableCell component={Link} to={`/order/${row.id}`}>
                   {row.id}
                 </TableCell>
                 <TableCell>{row.ecom_order_id}</TableCell>
