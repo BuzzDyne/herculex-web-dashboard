@@ -12,7 +12,6 @@ import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -21,7 +20,7 @@ import { mainListItems, secondaryListItems } from './subcomponents/listItems';
 // import Chart from './subcomponents/Chart';
 // import Deposits from './subcomponents/Deposits';
 import Copyright from './subcomponents/Copyright';
-import Orders from './subcomponents/Orders';
+import { Outlet } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -151,11 +150,7 @@ export default function Dashboard() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
               {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
-                </Paper>
-              </Grid>
+              <Outlet />
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>

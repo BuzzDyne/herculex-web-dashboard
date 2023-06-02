@@ -2,11 +2,11 @@ import RequireAuth from "./components/RequireAuth"
 import { Routes, Route } from 'react-router-dom'
 
 import Login from "./components/Login"
-import DashboardLayout from "./components/DashboardLayout";
 import Content from "./components/Content";
 import UserManagement from "./components/UserManagement";
 import OrderDetail from "./components/OrderDetail";
 import DashboardV2 from "./components/DashboardV2";
+import OrdersPage from "./components/subcomponents/OrdersPage";
 
 const ROLES = {
   'Admin'   : 1,
@@ -19,10 +19,9 @@ function App() {
 
   return (
     <Routes>
-      <Route path="test" element={<DashboardV2 />}/>
       <Route path="login" element={<Login />} />
 
-      <Route path="/" element={<DashboardLayout />}>
+      <Route path="/" element={<DashboardV2 />}>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
           <Route path="/admin" element={"Admin"} />
           <Route path="/user_management" element={<UserManagement />} />          
@@ -42,6 +41,7 @@ function App() {
 
         <Route element={<RequireAuth allowedRoles={Object.values(ROLES)}/>}>
           <Route path="/order/:order_id" element={<OrderDetail />} />
+          <Route path="/testpage" element={<OrdersPage />} />
           <Route path="/" element={<Content />} />
         </Route>
 

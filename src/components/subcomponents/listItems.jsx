@@ -8,39 +8,33 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PeopleIcon from '@mui/icons-material/People';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import LayersIcon from '@mui/icons-material/Layers';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import { Link } from 'react-router-dom';
 
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/">
       <ListItemIcon>
-        <DashboardIcon />
+        <DashboardIcon/>
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <ShoppingCartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Orders" />
-    </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/admin">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <ListItemText primary="Customers" />
+      <ListItemText primary="Admin" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/designer">
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
-      <ListItemText primary="Reports" />
+      <ListItemText primary="Design" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/printer">
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
-      <ListItemText primary="Integrations" />
+      <ListItemText primary="Printer" />
     </ListItemButton>
   </React.Fragment>
 );
@@ -48,25 +42,19 @@ export const mainListItems = (
 export const secondaryListItems = (
   <React.Fragment>
     <ListSubheader component="div" inset>
-      Saved reports
+      Admin Tools
     </ListSubheader>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/user_management">
       <ListItemIcon>
-        <AssignmentIcon />
+        <ShoppingCartIcon />
       </ListItemIcon>
-      <ListItemText primary="Current month" />
+      <ListItemText primary="User Management" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/testpage">
       <ListItemIcon>
-        <AssignmentIcon />
+        <ShoppingCartIcon />
       </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
+      <ListItemText primary="Test Page" />
     </ListItemButton>
   </React.Fragment>
 );
