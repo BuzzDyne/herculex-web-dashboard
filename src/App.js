@@ -6,6 +6,7 @@ import DashboardLayout from "./components/DashboardLayout";
 import Content from "./components/Content";
 import UserManagement from "./components/UserManagement";
 import OrderDetail from "./components/OrderDetail";
+import DashboardV2 from "./components/DashboardV2";
 
 const ROLES = {
   'Admin'   : 1,
@@ -18,6 +19,7 @@ function App() {
 
   return (
     <Routes>
+      <Route path="test" element={<DashboardV2 />}/>
       <Route path="login" element={<Login />} />
 
       <Route path="/" element={<DashboardLayout />}>
