@@ -1,11 +1,11 @@
-import { Container, TextField, Button, Typography, Alert, AlertTitle } from '@mui/material'
+import { TextField, Button, Typography, Alert, AlertTitle, ThemeProvider, Grid, CssBaseline, Avatar, createTheme, FormControlLabel, Checkbox, Paper, Box } from '@mui/material'
 import React, { useState, useEffect } from 'react'
 import axios from '../api/axios'
 import useAuth from '../hooks/useAuth'
 import jwt_decode from 'jwt-decode'
 import { useNavigate, useLocation } from 'react-router-dom'
-
-
+import Copyright from './subcomponents/Copyright';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 
 const LOGIN_URL = '/auth/login'
 
@@ -19,6 +19,8 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [pwd, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
+
+  const defaultTheme = createTheme();
 
   useEffect(() => {
     setErrMsg('')
@@ -67,48 +69,81 @@ const Login = () => {
   }
 
   return (
-    <Container>
-      <Typography variant="h3" align="center" sx={{ margin: '2rem' }}>
-        HerculexWeb
-      </Typography>
-      <form
-        onSubmit={handleSubmit} 
-        sx={{display: 'flex',flexDirection: 'column',alignItems: 'center',margin: 'auto',width: '50%'}}>
-        <TextField
-          label="Username"
-          value={username}
-          autoComplete='off'
-          onChange={(event) => setUsername(event.target.value)}
-          sx={{ width: '100%', marginBottom: 1 }}
-          required
+    <ThemeProvider theme={defaultTheme}>
+      <Grid container component="main" sx={{ height: '100vh' }}>
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={7}
+          sx={{
+            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+            backgroundRepeat: 'no-repeat',
+            backgroundColor: (t) =>
+              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
         />
-        <TextField
-          label="Password"
-          type="password"
-          value={pwd}
-          autoComplete='off'
-          onChange={(event) => setPwd(event.target.value)}
-          sx={{ width: '100%', marginBottom: 1 }}
-          required
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          type="submit"
-          sx={{ width: '100%', marginBottom: 1 }}
-        >Login
-        </Button>
-        {/* <p className={errMsg ? "errmsg" : "offscreen"}>{errMsg}</p> */}
-      </form>
-      {errMsg && (
-        <Alert severity="error">
-          <AlertTitle>Error</AlertTitle>
-          {errMsg}
-        </Alert>
-      )}
+        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Username"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                value={pwd}
+                label="Password"
+                type="password"
+                id="password"
+                onChange={(event) => setPwd(event.target.value)}
+                autoComplete="off"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+              {errMsg && (
+                <Alert severity="error">
+                  <AlertTitle>Error</AlertTitle>
+                  {errMsg}
+                </Alert>
+              )}
+              <Copyright sx={{ mt: 5 }} />
+            </Box>
+          </Box>
 
-
-    </Container>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   )
 }
 
