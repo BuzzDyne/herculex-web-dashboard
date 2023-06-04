@@ -271,7 +271,7 @@ function UserManagement() {
         </Grid>
         
         <TableContainer component={Paper}>
-          <Table>
+          <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell>Username</TableCell>
