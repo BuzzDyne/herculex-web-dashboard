@@ -7,6 +7,7 @@ import UserManagement from "./components/UserManagement";
 import OrderDetail from "./components/OrderDetail";
 import DashboardV2 from "./components/DashboardV2";
 import OrdersPage from "./components/subcomponents/OrdersPage";
+import { Grid, Paper } from "@mui/material";
 
 const ROLES = {
   'Admin'   : 1,
@@ -23,20 +24,20 @@ function App() {
 
       <Route path="/" element={<DashboardV2 />}>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
-          <Route path="/admin" element={"Admin"} />
+          <Route path="/admin" element={<Grid item xs={12}><Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>Admin</Paper></Grid>} />
           <Route path="/user_management" element={<UserManagement />} />          
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Designer]}/>}>
-          <Route path="/designer" element={"designer"} />
+          <Route path="/designer" element={<Grid item xs={12}><Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>Designer</Paper></Grid>} />
         </Route>
 
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Printer]}/>}>
-          <Route path="/printer" element={"printer"} />
+          <Route path="/printer" element={<Grid item xs={12}><Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>Printer</Paper></Grid>} />
         </Route>        
         
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin, ROLES.Packer]}/>}>
-          <Route path="/packer" element={"packer"} />
+          <Route path="/packer" element={<Grid item xs={12}><Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>Packer</Paper></Grid>} />
         </Route>
 
         <Route element={<RequireAuth allowedRoles={Object.values(ROLES)}/>}>

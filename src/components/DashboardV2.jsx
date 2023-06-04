@@ -15,12 +15,13 @@ import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-
 import { mainListItems, secondaryListItems } from './subcomponents/listItems';
 // import Chart from './subcomponents/Chart';
 // import Deposits from './subcomponents/Deposits';
 import Copyright from './subcomponents/Copyright';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { Avatar, Menu, MenuItem } from '@mui/material';
+import useAuth from '../hooks/useAuth';
 
 const drawerWidth = 240;
 
@@ -71,10 +72,19 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false)
+  const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const { setAuth } = useAuth()
+  const navigate = useNavigate()
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  const handleLogout = async () => {
+    setAuth({})
+    alert('Successfuly logged out!')
+    navigate('/login', { replace: true})   
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -108,11 +118,34 @@ export default function Dashboard() {
               HerculexWeb
             </Typography>
             <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
+              <Badge badgeContent={4} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+            <Avatar 
+              sx={{width: 30, height: 30, ml:1}}
+              alt="John Doe" 
+              src="/static"
+              onClick={e => setMenuIsOpen(true)}
+              />
           </Toolbar>
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            open={menuIsOpen}
+            onClose = {e => setMenuIsOpen(false)}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <MenuItem>My Profile</MenuItem>
+            <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
+          </Menu>
         </AppBar>
         <Drawer variant="permanent" open={open}>
           <Toolbar
@@ -149,7 +182,6 @@ export default function Dashboard() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Recent Orders */}
               <Outlet />
             </Grid>
             <Copyright sx={{ pt: 4 }} />

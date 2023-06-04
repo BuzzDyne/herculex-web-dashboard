@@ -1,8 +1,9 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import useAxiosPrivate from "../hooks/useAxiosPrivate"
 import { useNavigate, useLocation } from "react-router-dom"
 import { DeleteOutline, Edit } from "@mui/icons-material"
+import Title from "./subcomponents/Title"
 
 function UserManagement() {
   const [users, setUsers] = useState()
@@ -260,88 +261,141 @@ function UserManagement() {
   }
 
   return (
-    <>
-      <Typography variant="h5">User Management</Typography>
-      <Button variant="contained" color="success" onClick={openRegisDialog}>+</Button>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Username</TableCell>
-              <TableCell>Role</TableCell>
-              <TableCell>Created Date</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users?.map((user) => (
-                  <TableRow key={user.id}>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.role_name}</TableCell>
-                  <TableCell>{formatDate(user.created_dt)}</TableCell>
-                  <TableCell>
-                    <IconButton color="info" onClick={() => handleEditButtonClick(user.id)}>
-                      <Edit />
-                    </IconButton>
-                    {user.username !== 'admin' && (
-                      <IconButton color="error" onClick={() => handleDeleteButtonClick(user.id, user.username)}>
-                        <DeleteOutline  />
+    <Grid item xs={12}>
+      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+        <Grid container justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
+          <Grid item xs={8}><Title>User Management</Title></Grid>
+          <Grid item>
+            <Button variant="contained" color="success" onClick={openRegisDialog}>+</Button>
+          </Grid>
+        </Grid>
+        
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Username</TableCell>
+                <TableCell>Role</TableCell>
+                <TableCell>Created Date</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users?.map((user) => (
+                    <TableRow key={user.id}>
+                    <TableCell>{user.username}</TableCell>
+                    <TableCell>{user.role_name}</TableCell>
+                    <TableCell>{formatDate(user.created_dt)}</TableCell>
+                    <TableCell>
+                      <IconButton color="info" onClick={() => handleEditButtonClick(user.id)}>
+                        <Edit />
                       </IconButton>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                      {user.username !== 'admin' && (
+                        <IconButton color="error" onClick={() => handleDeleteButtonClick(user.id, user.username)}>
+                          <DeleteOutline  />
+                        </IconButton>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <Dialog open={isOpenRegisDialog} onClose={closeRegisDialog}>
-        <DialogContent>
-          <Typography variant="h6">Register New User</Typography>
-          <form onSubmit={handleRegisFormSubmit}>
-            <TextField
-              label="Username"
-              name="username"
-              value={newUser.username}
-              onChange={handleRegisFormInputChange}
-              error={!!regisFormErrors.username}
-              helperText={regisFormErrors.username}
-              fullWidth
-              required
-              margin="normal"
-            />
-            <TextField
-              label="Password"
-              name="password"
-              value={newUser.password}
-              onChange={handleRegisFormInputChange}
-              type="password"
-              error={!!regisFormErrors.password}
-              helperText={regisFormErrors.password}
-              fullWidth
-              required
-              margin="normal"
-            />
-            <TextField
-              label="Re-enter Password"
-              name="confirmPassword"
-              value={newUser.confirmPassword}
-              onChange={handleRegisFormInputChange}
-              type="password"
-              error={!!regisFormErrors.confirmPassword}
-              helperText={regisFormErrors.confirmPassword}
-              fullWidth
-              required
-              margin="normal"
-            />
-            <FormControl error={!!regisFormErrors.role} fullWidth required margin="normal">
-              <InputLabel id="role-label">Role</InputLabel>
-              <Select
-                labelId="role-label"
-                id="role"
-                name="role"
-                value={newUser.role}
+        <Dialog open={isOpenRegisDialog} onClose={closeRegisDialog}>
+          <DialogContent>
+            <Typography variant="h6">Register New User</Typography>
+            <form onSubmit={handleRegisFormSubmit}>
+              <TextField
+                label="Username"
+                name="username"
+                value={newUser.username}
                 onChange={handleRegisFormInputChange}
+                error={!!regisFormErrors.username}
+                helperText={regisFormErrors.username}
+                fullWidth
+                required
+                margin="normal"
+              />
+              <TextField
+                label="Password"
+                name="password"
+                value={newUser.password}
+                onChange={handleRegisFormInputChange}
+                type="password"
+                error={!!regisFormErrors.password}
+                helperText={regisFormErrors.password}
+                fullWidth
+                required
+                margin="normal"
+              />
+              <TextField
+                label="Re-enter Password"
+                name="confirmPassword"
+                value={newUser.confirmPassword}
+                onChange={handleRegisFormInputChange}
+                type="password"
+                error={!!regisFormErrors.confirmPassword}
+                helperText={regisFormErrors.confirmPassword}
+                fullWidth
+                required
+                margin="normal"
+              />
+              <FormControl error={!!regisFormErrors.role} fullWidth required margin="normal">
+                <InputLabel id="role-label">Role</InputLabel>
+                <Select
+                  labelId="role-label"
+                  id="role"
+                  name="role"
+                  value={newUser.role}
+                  onChange={handleRegisFormInputChange}
+                >
+                  <MenuItem value="">Select Role</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                  <MenuItem value="designer">Designer</MenuItem>
+                  <MenuItem value="printer">Printer</MenuItem>
+                  <MenuItem value="packer">Packer</MenuItem>
+                </Select>
+                {!!regisFormErrors.role && (
+                  <FormHelperText>{regisFormErrors.role}</FormHelperText>
+                )}
+              </FormControl>
+              <Button type="submit" variant="contained" color="primary">
+                Register
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isOpenDeleteDialog} onClose={closeDeleteDialog}>
+          <DialogTitle>Delete User</DialogTitle>
+          <DialogContent>
+            <Typography>
+              Are you sure you want to delete "{deleteDialogData.username}"?
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeDeleteDialog}>No</Button>
+            <Button onClick={handleDeleteConfirmation} color="error" autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Dialog open={isOpenEditDialog} onClose={closeEditDialog}>
+          <DialogTitle>Edit User</DialogTitle>
+          <DialogContent>
+            <Typography>Username: {editDialogData.username}</Typography>
+            <Typography>Created Date: {formatDate(editDialogData.created_dt)}</Typography>
+            <Typography>Last Login Date: {formatDate(editDialogData.last_login_dt)}</Typography>
+            <FormControl fullWidth required margin="normal">
+              <InputLabel id="edit-role-label">Role</InputLabel>
+              <Select
+                labelId="edit-role-label"
+                id="edit-role"
+                name="role_name"
+                value={editDialogData.role_name}
+                onChange={handleEditFormInputChange}
               >
                 <MenuItem value="">Select Role</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
@@ -349,83 +403,37 @@ function UserManagement() {
                 <MenuItem value="printer">Printer</MenuItem>
                 <MenuItem value="packer">Packer</MenuItem>
               </Select>
-              {!!regisFormErrors.role && (
-                <FormHelperText>{regisFormErrors.role}</FormHelperText>
-              )}
             </FormControl>
-            <Button type="submit" variant="contained" color="primary">
-              Register
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={isOpenDeleteDialog} onClose={closeDeleteDialog}>
-        <DialogTitle>Delete User</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to delete "{deleteDialogData.username}"?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeDeleteDialog}>No</Button>
-          <Button onClick={handleDeleteConfirmation} color="error" autoFocus>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog open={isOpenEditDialog} onClose={closeEditDialog}>
-        <DialogTitle>Edit User</DialogTitle>
-        <DialogContent>
-          <Typography>Username: {editDialogData.username}</Typography>
-          <Typography>Created Date: {formatDate(editDialogData.created_dt)}</Typography>
-          <Typography>Last Login Date: {formatDate(editDialogData.last_login_dt)}</Typography>
-          <FormControl fullWidth required margin="normal">
-            <InputLabel id="edit-role-label">Role</InputLabel>
-            <Select
-              labelId="edit-role-label"
-              id="edit-role"
-              name="role_name"
-              value={editDialogData.role_name}
+            <TextField
+              label="Password"
+              name="edit_password"
+              value={editDialogData.edit_password}
               onChange={handleEditFormInputChange}
-            >
-              <MenuItem value="">Select Role</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-              <MenuItem value="designer">Designer</MenuItem>
-              <MenuItem value="printer">Printer</MenuItem>
-              <MenuItem value="packer">Packer</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            label="Password"
-            name="edit_password"
-            value={editDialogData.edit_password}
-            onChange={handleEditFormInputChange}
-            type="password"
-            error={!!editFormErrors.password}
-            helperText={editFormErrors.password}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Re-enter Password"
-            name="edit_confirmPassword"
-            value={editDialogData.edit_confirmPassword}
-            onChange={handleEditFormInputChange}
-            type="password"
-            error={!!editFormErrors.confirmPassword}
-            helperText={editFormErrors.confirmPassword}
-            fullWidth
-            margin="normal"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button color="primary" onClick={closeEditDialog}>Cancel</Button>
-          <Button color="primary" onClick={handleEditConfirmation}>Submit</Button>
-        </DialogActions>
-      </Dialog>
-    </>
+              type="password"
+              error={!!editFormErrors.password}
+              helperText={editFormErrors.password}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="Re-enter Password"
+              name="edit_confirmPassword"
+              value={editDialogData.edit_confirmPassword}
+              onChange={handleEditFormInputChange}
+              type="password"
+              error={!!editFormErrors.confirmPassword}
+              helperText={editFormErrors.confirmPassword}
+              fullWidth
+              margin="normal"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button color="primary" onClick={closeEditDialog}>Cancel</Button>
+            <Button color="primary" onClick={handleEditConfirmation}>Submit</Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+    </Grid>
   )
 }
 

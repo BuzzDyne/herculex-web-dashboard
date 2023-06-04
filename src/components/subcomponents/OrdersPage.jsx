@@ -5,10 +5,10 @@ import Orders from './Orders'
 const OrdersPage = () => {
   return (
     <Grid item xs={12}>
-    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-      <Orders />
-    </Paper>
-  </Grid>
+      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+        <Orders />
+      </Paper>
+    </Grid>
   )
 }
 
