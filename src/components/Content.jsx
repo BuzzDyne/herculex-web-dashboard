@@ -19,7 +19,7 @@ const Content = () => {
           signal: controller.signal
         })
 
-        console.log(response.data)
+        // console.log(response.data)
         isMounted && setOrders(response.data)
       } catch (err) {
         console.error(err)

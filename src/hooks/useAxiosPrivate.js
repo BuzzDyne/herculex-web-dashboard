@@ -8,7 +8,7 @@ const useAxiosPrivate = () => {
   const { auth } = useAuth()
 
   useEffect(() => {
-    console.log(`Token Before Request is made ${auth?.accessToken}`);
+    // console.log(`Token Before Request is made ${auth?.accessToken}`);
     const requestIntercept = axiosPrivate.interceptors.request.use(
       config => {
         if(!config.headers['Authorization']) {

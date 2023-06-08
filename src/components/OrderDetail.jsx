@@ -8,7 +8,7 @@ const steps = [
   'Design Finished', 
   'Printing Done', 
   'Packing Done', 
-  'Shipping Done'
+  'Order Shipped'
 ]
 
 
@@ -20,7 +20,7 @@ const OrderDetail = () => {
   const [completed, setCompleted] = useState({
     0: false,
     1: false,
-    2: true,
+    2: false,
     3: false,
     4: false,
   })
@@ -34,7 +34,7 @@ const OrderDetail = () => {
     let isMounted = true
     const controller = new AbortController()
 
-    const getUsers = async () => {
+    const getOrderDetail = async () => {
       try {
         const response = await axiosPrivate.get(`/api_order/id/${order_id}`, {
           signal: controller.signal
@@ -60,15 +60,17 @@ const OrderDetail = () => {
         })
 
       } catch (err) {
-        console.log(err)
-        if(err?.response?.status === 422 && err?.response?.data?.detail === 'Signature has expired') {
+        // console.log(err?.response?.status)
+        if(err?.response?.status === 404 && err?.response?.data?.detail === 'ID not found') {
+          navigate('/404')
+        } else if(err?.response?.status === 422 && err?.response?.data?.detail === 'Signature has expired') {
           alert('Token expired! Please relogin!')       
           navigate('/login', {state: {from: location}, replace: true})   
         }
       }
     }
 
-    getUsers();
+    getOrderDetail();
 
     return () => {
       isMounted = false

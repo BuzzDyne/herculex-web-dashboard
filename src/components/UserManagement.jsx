@@ -47,7 +47,7 @@ function UserManagement() {
         const response = await axiosPrivate.get('/api_user/get_list', {
           signal: controller.signal
         })
-        console.log(response.data)
+        // console.log(response.data)
         isMounted && setUsers(response.data)
       } catch (err) {
         console.log(err)

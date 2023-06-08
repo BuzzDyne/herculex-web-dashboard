@@ -74,7 +74,7 @@ const defaultTheme = createTheme();
 export default function Dashboard() {
   const [open, setOpen] = useState(false)
   const [menuIsOpen, setMenuIsOpen] = useState(false)
-  const { setAuth } = useAuth()
+  const { auth, setAuth } = useAuth()
   const navigate = useNavigate()
   const toggleDrawer = () => {
     setOpen(!open);
@@ -161,10 +161,51 @@ export default function Dashboard() {
             </IconButton>
           </Toolbar>
           <Divider />
+          <Avatar 
+              sx={{
+                width: open ? 80 : 40, 
+                height: open ? 80 : 40, 
+                margin: '32px auto 8px auto'}}
+              alt={auth.token_username}
+              src="/static"
+              />
+            {open && <>
+              <Typography
+                component="h6"
+                variant="subtitle2"
+                color="inherit"
+                noWrap
+                align="center"
+              >
+                {auth.token_username}
+              </Typography>
+              <Typography
+                component="p"
+                variant="subtitle2"
+                color="inherit"
+                noWrap
+                align="center"
+              >
+                {(() => {
+                  switch (auth.token_role_id) {
+                    case 1:
+                      return 'Admin';
+                    case 2:
+                      return 'Designer';
+                    case 3:
+                      return 'Printer';
+                    case 4:
+                      return 'Packer';
+                    default:
+                      return '';
+                  }
+                })()}
+              </Typography>
+            </>}
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
+            {auth.token_role_id === 1 && secondaryListItems}
           </List>
         </Drawer>
         <Box

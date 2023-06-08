@@ -7,6 +7,7 @@ import UserManagement from "./components/UserManagement";
 import OrderDetail from "./components/OrderDetail";
 import DashboardV2 from "./components/DashboardV2";
 import OrdersPage from "./components/subcomponents/OrdersPage";
+import NotFoundPage from "./components/NotFoundPage";
 import { Grid, Paper } from "@mui/material";
 
 const ROLES = {
@@ -46,6 +47,7 @@ function App() {
           <Route path="/" element={<Content />} />
         </Route>
 
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

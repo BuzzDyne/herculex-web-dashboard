@@ -4,10 +4,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 // import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PeopleIcon from '@mui/icons-material/People';
-import BarChartIcon from '@mui/icons-material/BarChart';
-import LayersIcon from '@mui/icons-material/Layers';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import AbcIcon from '@mui/icons-material/Abc';
 import { Link } from 'react-router-dom';
 
 export const mainListItems = (
@@ -20,19 +18,19 @@ export const mainListItems = (
     </ListItemButton>
     <ListItemButton component={Link} to="/admin">
       <ListItemIcon>
-        <PeopleIcon />
+        <AbcIcon />
       </ListItemIcon>
       <ListItemText primary="Admin" />
     </ListItemButton>
     <ListItemButton component={Link} to="/designer">
       <ListItemIcon>
-        <BarChartIcon />
+        <AbcIcon />
       </ListItemIcon>
       <ListItemText primary="Design" />
     </ListItemButton>
     <ListItemButton component={Link} to="/printer">
       <ListItemIcon>
-        <LayersIcon />
+        <AbcIcon />
       </ListItemIcon>
       <ListItemText primary="Printer" />
     </ListItemButton>
@@ -46,13 +44,13 @@ export const secondaryListItems = (
     </ListSubheader> */}
     <ListItemButton component={Link} to="/user_management">
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <PeopleAltIcon />
       </ListItemIcon>
       <ListItemText primary="User Management" />
     </ListItemButton>
     <ListItemButton component={Link} to="/testpage">
       <ListItemIcon>
-        <ShoppingCartIcon />
+        <AbcIcon />
       </ListItemIcon>
       <ListItemText primary="Test Page" />
     </ListItemButton>
