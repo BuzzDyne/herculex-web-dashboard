@@ -13,6 +13,7 @@ import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './subcomponents/listItems';
@@ -20,7 +21,7 @@ import { mainListItems, secondaryListItems } from './subcomponents/listItems';
 // import Deposits from './subcomponents/Deposits';
 import Copyright from './subcomponents/Copyright';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Avatar, Menu, MenuItem } from '@mui/material';
+import { Avatar, InputBase, Menu, MenuItem, alpha } from '@mui/material';
 import useAuth from '../hooks/useAuth';
 
 const drawerWidth = 240;
@@ -69,16 +70,83 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
+
 const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const [open, setOpen] = useState(false)
   const [menuIsOpen, setMenuIsOpen] = useState(false)
+  const [searchText, setSearchText] = useState("")
   const { auth, setAuth } = useAuth()
   const navigate = useNavigate()
+
+  const handleSearchBarChange = (event) => {
+    const inputText = event.target.value;
+
+    // Remove non-numeric characters
+    let numericOnlyText = inputText.replace(/[^0-9]/g, '');
+    
+    // Remove leading zeros if present
+    if (numericOnlyText.length > 1 && numericOnlyText[0] === '0') {
+      numericOnlyText = numericOnlyText.slice(1);
+    }
+
+    // Prevent single zero input
+    if (numericOnlyText === '0') {
+      numericOnlyText = '';
+    }
+  
+    setSearchText(numericOnlyText);
+  }
+
+  const handleKeyUp = (event) => {
+    if (event.key === 'Enter' && searchText) {
+      navigate(`/order/${searchText}`)   
+    }
+  }
+  
   const toggleDrawer = () => {
     setOpen(!open);
-  };
+  }
 
   const handleLogout = async () => {
     setAuth({})
@@ -91,44 +159,55 @@ export default function Dashboard() {
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
         <AppBar position="absolute" open={open}>
-          <Toolbar
+        <Toolbar
+          sx={{
+            pr: '24px', // keep right padding when drawer closed
+          }}
+        >
+          <IconButton // Drawer Menu Icon
+            edge="start"
+            color="inherit"
+            aria-label="open drawer"
+            onClick={toggleDrawer}
             sx={{
-              pr: '24px', // keep right padding when drawer closed
+              marginRight: '36px',
+              ...(open && { display: 'none' }),
             }}
           >
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={toggleDrawer}
-              sx={{
-                marginRight: '36px',
-                ...(open && { display: 'none' }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              HerculexWeb
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <Avatar 
-              sx={{width: 30, height: 30, ml:1}}
-              alt="John Doe" 
-              src="/static"
-              onClick={e => setMenuIsOpen(true)}
-              />
-          </Toolbar>
+            <MenuIcon />
+          </IconButton>
+          <Typography // HerculexWeb
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            sx={{flexGrow: 1,display: { xs: 'none', sm: 'flex'}}}
+          >
+            HerculexWeb
+          </Typography>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search OrderID…"
+              value={searchText}
+              onChange={handleSearchBarChange}
+              onKeyUp={handleKeyUp}
+            />
+          </Search>
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+          <Avatar 
+            sx={{width: 30, height: 30, ml: 1}}
+            alt={auth.token_username?.toUpperCase()}
+            src="/static"
+            onClick={e => setMenuIsOpen(true)}
+          />
+        </Toolbar>
           <Menu
             id="demo-positioned-menu"
             aria-labelledby="demo-positioned-button"
@@ -166,7 +245,7 @@ export default function Dashboard() {
                 width: open ? 80 : 40, 
                 height: open ? 80 : 40, 
                 margin: '32px auto 8px auto'}}
-              alt={auth.token_username}
+              alt={auth.token_username?.toUpperCase()}
               src="/static"
               />
             {open && <>

@@ -84,7 +84,7 @@ const OrderDetail = () => {
     <>
     <Grid item xs={9}> {/* Order Informations */}
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%'}}>
-        <h2>Order #{order_id}</h2>
+        <h2>Order #{order.id}</h2>
         <p>Customer Phone No</p>
         <p>User Deadline</p>
         <p>Design Acc Date</p>
@@ -133,7 +133,7 @@ const OrderDetail = () => {
 
     <Grid item xs={12} > {/* Order Informations */}
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-        <h2>Order #{order_id}</h2>
+        <h2>Order #{order.id}</h2>
         <p>{order.invoice_ref}</p>
       </Paper>
     </Grid>
