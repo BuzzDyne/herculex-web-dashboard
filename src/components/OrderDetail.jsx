@@ -81,17 +81,7 @@ const OrderDetail = () => {
   
 
   return (
-    <>
-    <Grid item xs={9}> {/* Order Informations */}
-      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%'}}>
-        <h2>Order #{order.id}</h2>
-        <p>Customer Phone No</p>
-        <p>User Deadline</p>
-        <p>Design Acc Date</p>
-        <p>Print Done Date</p>
-      </Paper>
-    </Grid>
-
+    <>    
     <Grid item xs={3} sx={{ height: '100%'}}> {/* Image */}
       <Paper sx={{ display: 'flex', flexDirection: 'column'}}>
       <Box
@@ -114,6 +104,17 @@ const OrderDetail = () => {
       </Box>
       </Paper>
     </Grid>
+    <Grid item xs={9}> {/* Order Informations */}
+      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%'}}>
+        <h2>Order #{order.id}</h2>
+        <p>Customer Phone No</p>
+        <p>User Deadline</p>
+        <p>Design Acc Date</p>
+        <p>Print Done Date</p>
+      </Paper>
+    </Grid>
+
+
     <Grid item xs = {12} sx={{height:'100%', maxHeight:'100px'}}> {/* Stepper */}
         <Stepper activeStep={999} nonLinear alternativeLabel >
           {steps.map((label, index) => (
@@ -131,9 +132,9 @@ const OrderDetail = () => {
         </Stepper>
     </Grid>
 
-    <Grid item xs={12} > {/* Order Informations */}
+    <Grid item xs={12} > {/* Order Items */}
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-        <h2>Order #{order.id}</h2>
+        <h2>Order Items</h2>
         <p>{order.invoice_ref}</p>
       </Paper>
     </Grid>

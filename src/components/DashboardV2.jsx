@@ -16,6 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { mainListItems, secondaryListItems } from './subcomponents/listItems';
 // import Chart from './subcomponents/Chart';
 // import Deposits from './subcomponents/Deposits';
@@ -201,12 +202,9 @@ export default function Dashboard() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Avatar 
-            sx={{width: 30, height: 30, ml: 1}}
-            alt={auth.token_username?.toUpperCase()}
-            src="/static"
-            onClick={e => setMenuIsOpen(true)}
-          />
+          <IconButton color='inherit' sx={{width: 30, height: 10, ml: 1}} onClick={e => setMenuIsOpen(true)}>
+            <ArrowDropDownIcon />
+          </IconButton>
         </Toolbar>
           <Menu
             id="demo-positioned-menu"
