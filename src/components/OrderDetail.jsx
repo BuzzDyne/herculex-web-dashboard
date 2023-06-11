@@ -1,5 +1,6 @@
-import { Box, Button, Divider, Grid, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogContent, Grid, Paper, Step, StepLabel, Stepper, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 
@@ -24,6 +25,10 @@ const OrderDetail = () => {
     3: false,
     4: false,
   })
+  const [isInputDialogOpen, setIsInputDialogOpen]     = useState(false)
+  const [isDesignDialogOpen, setIsDesignDialogOpen]   = useState(false)
+  const [isPrintDialogOpen, setIsPrintDialogOpen]     = useState(false)
+  const [isPackingDialogOpen, setIsPackingDialogOpen] = useState(false)
 
   const axiosPrivate = useAxiosPrivate()
 
@@ -80,6 +85,17 @@ const OrderDetail = () => {
 
   }, [axiosPrivate, navigate, location, order_id ]);
   
+  const openCloseDialog = (dialogName, isOpening) => {
+    if (dialogName === 'input') {
+      setIsInputDialogOpen(isOpening)
+    } else if (dialogName === 'design') {
+      setIsDesignDialogOpen(isOpening)
+    } else if (dialogName === 'print') {
+      setIsPrintDialogOpen(isOpening)
+    } else if (dialogName === 'packing') {
+      setIsPackingDialogOpen(isOpening)
+    }
+  }
 
   return (
     <>    
@@ -111,10 +127,10 @@ const OrderDetail = () => {
         <p>Customer Phone No: {order.cust_phone_no ? order.cust_phone_no : '-'}</p>
         <p>User Deadline: {order.user_deadline_dt ? order.user_deadline_dt : '-'}</p>
         <Grid container spacing={0.5} >
-          <Grid item xs><Button variant="contained" sx={{width:'100%', height:'100%'}}>Input Data</Button></Grid>
-          <Grid item xs><Button variant="contained" sx={{width:'100%', height:'100%'}}>Submit Design</Button></Grid>
-          <Grid item xs><Button variant="contained" sx={{width:'100%', height:'100%'}}>Printing Done</Button></Grid>
-          <Grid item xs><Button variant="contained" sx={{width:'100%', height:'100%'}}>Packing Done</Button></Grid>
+          { !completed[0] && <Grid item xs><Button onClick={() => openCloseDialog('input', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Input Data</Button></Grid>}
+          { !completed[1] && <Grid item xs><Button onClick={() => openCloseDialog('design', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Submit Design</Button></Grid>}
+          { !completed[2] && <Grid item xs><Button onClick={() => openCloseDialog('print', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Printing Done</Button></Grid>}
+          { !completed[3] && <Grid item xs><Button onClick={() => openCloseDialog('packing', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Packing Done</Button></Grid>}
         </Grid>
       </Paper>
     </Grid>
@@ -204,6 +220,32 @@ const OrderDetail = () => {
         </Paper>
       </Paper>
     </Grid>
+
+    <Dialog open={isInputDialogOpen} onClose={()=>{openCloseDialog('input', false)}}> {/* Input Dialog */}
+      <DialogContent>
+        <Typography variant="h6">Input Initial Data</Typography>
+        <TextField label="Phone Number" />
+        <DatePicker label="Custom Deadline Date" />
+      </DialogContent>
+    </Dialog>
+
+    <Dialog open={isDesignDialogOpen} onClose={()=>{openCloseDialog('design', false)}}> {/* Design Dialog */}
+      <DialogContent>
+        <Typography variant="h6">Submit Design</Typography>
+      </DialogContent>
+    </Dialog>
+
+    <Dialog open={isPrintDialogOpen} onClose={()=>{openCloseDialog('print', false)}}> {/* Design Dialog */}
+      <DialogContent>
+        <Typography variant="h6">Confirm Printing</Typography>
+      </DialogContent>
+    </Dialog>
+
+    <Dialog open={isPackingDialogOpen} onClose={()=>{openCloseDialog('packing', false)}}> {/* Design Dialog */}
+      <DialogContent>
+        <Typography variant="h6">Confirm Packing</Typography>
+      </DialogContent>
+    </Dialog>
     </>
   );
 };
