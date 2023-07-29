@@ -3,6 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import dayjs from 'dayjs';
+import PhoneIcon from '@mui/icons-material/Phone';
+import EventIcon from '@mui/icons-material/Event';
 
 const steps = [
   'Initial Input', 
@@ -17,7 +20,7 @@ const OrderDetail = () => {
   const { order_id } = useParams()
   const [order, setOrder] = useState({})
   const [orderItems, setOrderItems] = useState([{}])
-  // const [numberSubmitted, setNumberSubmitted] = useState(0)
+  const [numberSubmitted, setNumberSubmitted] = useState(0)
   const [completed, setCompleted] = useState({
     0: false,
     1: false,
@@ -34,6 +37,47 @@ const OrderDetail = () => {
 
   const navigate = useNavigate()
   const location = useLocation()
+
+  // Initial Data Prompt
+  const [idpPhone, setIdpPhone] = useState('')
+  const [idpDeadline, setidpDeadline] = useState(null)
+  const [idpErrors, setIdpErrors] = useState({})
+
+  const handleIdpSubmit = async (event) => {
+    event.preventDefault();
+
+    // Validate form inputs
+    const phoneRegex = /^(\+?\d{1,2}\s?)?(\()?\d{3}(\))?[-\s]?\d{3}[-\s]?\d{4}$/;
+    const errors = {};
+    if (!phoneRegex.test(idpPhone)) {
+      errors.phoneNo = "Phone number is invalid";
+    }
+    
+    // Set form errors, if any
+    setIdpErrors(errors);
+
+    var d = new Date(idpDeadline)
+    var dateString = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+    // If there are no errors, proceed with user registration
+    if (Object.keys(errors).length === 0) {
+      try {
+        await axiosPrivate.patch(`/api_order/id/${order.id}`, {
+          cust_phone_no: idpPhone,
+          user_deadline_dt: dateString
+        });
+
+        // Close the registration dialog
+        openCloseDialog('input', false);
+
+        incrementNumberSubmitted()
+      } catch (err) {
+        console.log(err);
+        alert(err)
+      }
+    }
+  };
+
 
   useEffect(() => {
     let isMounted = true
@@ -66,7 +110,6 @@ const OrderDetail = () => {
         })
 
       } catch (err) {
-        // console.log(err?.response?.status)
         if(err?.response?.status === 404 && err?.response?.data?.detail === 'ID not found') {
           navigate('/404')
         } else if(err?.response?.status === 422 && err?.response?.data?.detail === 'Signature has expired') {
@@ -83,10 +126,23 @@ const OrderDetail = () => {
       controller.abort()
     }
 
-  }, [axiosPrivate, navigate, location, order_id ]);
+  }, [axiosPrivate, navigate, location, order_id, numberSubmitted]);
   
+
+  const incrementNumberSubmitted = () => {
+    setNumberSubmitted(numberSubmitted => numberSubmitted + 1);
+  }
+
   const openCloseDialog = (dialogName, isOpening) => {
     if (dialogName === 'input') {
+      setIdpPhone(order.cust_phone_no)
+
+      if (!order.user_deadline_dt) {
+        setidpDeadline(dayjs().add(5, 'day'))
+      } else {
+        setidpDeadline(dayjs(new Date(order.user_deadline_dt)))
+      }
+
       setIsInputDialogOpen(isOpening)
     } else if (dialogName === 'design') {
       setIsDesignDialogOpen(isOpening)
@@ -124,13 +180,17 @@ const OrderDetail = () => {
     <Grid item xs={9}> {/* Order Informations */}
       <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column', height: '100%'}}>
         <h2>Order #{order.id}</h2>
-        <p>Customer Phone No: {order.cust_phone_no ? order.cust_phone_no : '-'}</p>
-        <p>User Deadline: {order.user_deadline_dt ? order.user_deadline_dt : '-'}</p>
-        <Grid container spacing={0.5} >
-          { !completed[0] && <Grid item xs><Button onClick={() => openCloseDialog('input', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Input Data</Button></Grid>}
-          { !completed[1] && <Grid item xs><Button onClick={() => openCloseDialog('design', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Submit Design</Button></Grid>}
-          { !completed[2] && <Grid item xs><Button onClick={() => openCloseDialog('print', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Printing Done</Button></Grid>}
-          { !completed[3] && <Grid item xs><Button onClick={() => openCloseDialog('packing', true)}variant="contained" sx={{width:'100%', height:'100%'}}>Packing Done</Button></Grid>}
+        <p sx={{ display: 'flex', alignItems: 'center' }}>
+          <PhoneIcon sx={{ marginRight: '0.5em', verticalAlign: 'middle'  }} />: {order.cust_phone_no ? order.cust_phone_no : '-'}
+        </p>
+        <p sx={{ display: 'flex', alignItems: 'center' }}>
+          <EventIcon sx={{ marginRight: '0.5em', verticalAlign: 'middle'  }} />: {order.user_deadline_dt ? order.user_deadline_dt.substring(0, 10) : '-'}
+        </p>
+        <Grid container spacing={0.5} marginTop={'auto'}>
+          { !completed[0] && <Grid item xs><Button onClick={() => openCloseDialog('input', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Input Data</Button></Grid>}
+          { !completed[1] && <Grid item xs><Button onClick={() => openCloseDialog('design', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Submit Design</Button></Grid>}
+          { !completed[2] && <Grid item xs><Button onClick={() => openCloseDialog('print', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Printing Done</Button></Grid>}
+          { !completed[3] && <Grid item xs><Button onClick={() => openCloseDialog('packing', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Packing Done</Button></Grid>}
         </Grid>
       </Paper>
     </Grid>
@@ -221,11 +281,34 @@ const OrderDetail = () => {
       </Paper>
     </Grid>
 
-    <Dialog open={isInputDialogOpen} onClose={()=>{openCloseDialog('input', false)}}> {/* Input Dialog */}
+    <Dialog open={isInputDialogOpen} onClose={() => openCloseDialog('input', false)}> {/* Initial Input Dialog */}
       <DialogContent>
-        <Typography variant="h6">Input Initial Data</Typography>
-        <TextField label="Phone Number" />
-        <DatePicker label="Custom Deadline Date" />
+        <Typography variant="h6" marginBottom={1}>Input Initial Data</Typography>
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <TextField 
+            label="Phone Number" 
+            sx={{ width: '100%', textAlign: 'left', mb: 2 }} 
+            onChange={(e) => setIdpPhone(e.target.value)}
+            value={idpPhone}
+            error={!!idpErrors.phoneNo}
+            helperText={idpErrors.phoneNo}
+          />
+          <DatePicker
+            label="Custom Deadline Date"
+            value={idpDeadline}
+            onChange={(date) => {
+              setidpDeadline(date);
+            }}
+            format="YYYY-MM-DD"
+            sx={{ width: '100%', textAlign: 'right', mb: 2 }}
+            onBeforeInput={(e) => {
+              e.preventDefault();
+            }}
+          />
+          <Button onClick={handleIdpSubmit} variant="contained" sx={{ width: '100%' }}>
+            Submit
+          </Button>
+        </Box>
       </DialogContent>
     </Dialog>
 
