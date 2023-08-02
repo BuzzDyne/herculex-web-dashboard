@@ -3,6 +3,7 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Switch
 import React from 'react'
 import { Link } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
+import { ROLE_MAPPING } from '../constants'
 
 const Sidebar = () => {
   const { auth } = useAuth()
@@ -13,17 +14,8 @@ const Sidebar = () => {
       p={2}
       sx={{display: {xs: "none", sm: "block"}}}
       >
-        {auth.token_username} | {
-          auth.token_role_id === 1
-            ? 'Admin'
-            : auth.token_role_id === 2
-              ? 'Designer'
-              : auth.token_role_id === 3
-                ? 'Printer'
-                  : auth.token_role_id === 4
-                    ? 'Packer'
-                    : '######'
-        }
+        {auth.token_username} | {ROLE_MAPPING[auth.token_role_id] || '######'}
+        
         <List>
           <ListItem disablePadding>
             <ListItemButton component={Link} to="/">

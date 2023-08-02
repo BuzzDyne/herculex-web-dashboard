@@ -9,6 +9,8 @@ import EventIcon from '@mui/icons-material/Event';
 import LinkIcon from '@mui/icons-material/Link';
 import LinkOffIcon from '@mui/icons-material/LinkOff';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import useAuth from '../hooks/useAuth'
+import { ORDERDETAIL_ACTION_ROLE_ACCESS_MAPPING } from '../constants';
 
 const steps = [
   'Initial Input', 
@@ -21,6 +23,7 @@ const steps = [
 
 
 const OrderDetail = () => {
+  const { auth } = useAuth()
   const { order_id } = useParams()
   const [order, setOrder] = useState({})
   const [orderItems, setOrderItems] = useState([{}])
@@ -264,6 +267,17 @@ const OrderDetail = () => {
     }
   }
 
+  const hasAccess = (buttonLabel) => ORDERDETAIL_ACTION_ROLE_ACCESS_MAPPING[auth.token_role_id]?.includes(buttonLabel);
+
+  // OrderDetail Actions Button Visibility
+  const isAdmin = auth.token_role_id === 1
+  const showInitialInputButton  = !completed[0] && hasAccess('Input Data')                        
+  const showDesignSubmitButton  = hasAccess('Submit Design Link') && ((isAdmin && !completed[1]) || (!isAdmin && !completed[1] && completed[0]))
+  const showDesignEditButton    = hasAccess('Edit Design Link') && (completed[1] && !completed[2])
+  const showDesignApproveButton = hasAccess('Approve Design') && completed[1]
+  const showPrintingDoneButton  = hasAccess('Printing Done') && ((isAdmin && !completed[3]) || (!isAdmin && !completed[3] && completed[2]))
+  const showPackingDoneButton   = hasAccess('Packing Done') && ((isAdmin && !completed[4]) || (!isAdmin && !completed[4] && completed[3]))
+
   return (
     <>    
     <Grid item xs={3} sx={{ height: '100%'}}> {/* Image */}
@@ -302,7 +316,7 @@ const OrderDetail = () => {
         </p>
         <Grid container spacing={0.5} marginTop={'auto'} justifyContent="flex-start">
           <Grid item>
-            <Button 
+            {isAdmin && <Button 
               variant="contained"
               color="waColor"
               startIcon={<WhatsAppIcon />}  
@@ -316,7 +330,7 @@ const OrderDetail = () => {
               }}
               >
                 {order.cust_phone_no ? "Go to Whatsapp" : "Cust Phone not set"}
-            </Button>
+            </Button>}
           </Grid>
           <Grid item>
             <Button 
@@ -334,12 +348,24 @@ const OrderDetail = () => {
           </Grid>
         </Grid>
         <Grid container spacing={0.5} marginTop={'auto'}>
-          { !completed[0] && <Grid item xs><Button onClick={() => openCloseDialog('input', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Input Data</Button></Grid>}
-          { !completed[1] && <Grid item xs><Button onClick={() => openCloseDialog('design', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Submit Design Link</Button></Grid>}
-          { (completed[1] && !completed[2]) && <Grid item xs><Button onClick={() => openCloseDialog('design', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Edit Design Link</Button></Grid>}
-          { !completed[2] && <Grid item xs><Button onClick={() => openCloseDialog('design_acc', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Approve Design</Button></Grid>}
-          { !completed[3] && <Grid item xs><Button onClick={() => openCloseDialog('print', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Printing Done</Button></Grid>}
-          { !completed[4] && <Grid item xs><Button onClick={() => openCloseDialog('packing', true)}variant="contained" sx={{width:'100%', height:'100%', fontSize: '11px'}}>Packing Done</Button></Grid>}
+        {showInitialInputButton && (
+          <OrderDetailActionButton label="Input Data" onClick={() => openCloseDialog('input', true)} />
+        )}
+        {showDesignSubmitButton && (
+          <OrderDetailActionButton label="Submit Design Link" onClick={() => openCloseDialog('design', true)} />
+        )}
+        {showDesignEditButton && (
+          <OrderDetailActionButton label="Edit Design Link" onClick={() => openCloseDialog('design', true)} />
+        )}
+        {showDesignApproveButton && (
+          <OrderDetailActionButton label="Approve Design" onClick={() => openCloseDialog('design_acc', true)} />
+        )}
+        {showPrintingDoneButton && (
+          <OrderDetailActionButton label="Printing Done" onClick={() => openCloseDialog('print', true)} />
+        )}
+        {showPackingDoneButton && (
+          <OrderDetailActionButton label="Packing Done" onClick={() => openCloseDialog('packing', true)} />
+        )}
         </Grid>
       </Paper>
     </Grid>
@@ -551,6 +577,16 @@ const OrderDetail = () => {
       </DialogActions>
     </Dialog>
     </>
+  );
+};
+
+const OrderDetailActionButton = ({ label, onClick }) => {
+  return (
+    <Grid item xs>
+      <Button onClick={onClick} variant="contained" sx={{ width: '100%', height: '100%', fontSize: '11px' }}>
+        {label}
+      </Button>
+    </Grid>
   );
 };
 
