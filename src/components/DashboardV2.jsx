@@ -156,156 +156,154 @@ export default function Dashboard() {
   }
 
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppBar position="absolute" open={open}>
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar position="absolute" open={open}>
+      <Toolbar
+        sx={{
+          pr: '24px', // keep right padding when drawer closed
+        }}
+      >
+        <IconButton // Drawer Menu Icon
+          edge="start"
+          color="inherit"
+          aria-label="open drawer"
+          onClick={toggleDrawer}
+          sx={{
+            marginRight: '36px',
+            ...(open && { display: 'none' }),
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Typography // HerculexWeb
+          component="h1"
+          variant="h6"
+          color="inherit"
+          noWrap
+          sx={{flexGrow: 1,display: { xs: 'none', sm: 'flex'}}}
+        >
+          HerculexWeb
+        </Typography>
+        <Search>
+          <SearchIconWrapper>
+            <SearchIcon />
+          </SearchIconWrapper>
+          <StyledInputBase
+            placeholder="Search OrderID…"
+            value={searchText}
+            onChange={handleSearchBarChange}
+            onKeyUp={handleKeyUp}
+          />
+        </Search>
+        <IconButton color="inherit">
+          <Badge badgeContent={4} color="error">
+            <NotificationsIcon />
+          </Badge>
+        </IconButton>
+        <IconButton color='inherit' sx={{width: 30, height: 10, ml: 1}} onClick={e => setMenuIsOpen(true)}>
+          <ArrowDropDownIcon />
+        </IconButton>
+      </Toolbar>
+        <Menu
+          id="demo-positioned-menu"
+          aria-labelledby="demo-positioned-button"
+          open={menuIsOpen}
+          onClose = {e => setMenuIsOpen(false)}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <MenuItem>My Profile</MenuItem>
+          <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
+        </Menu>
+      </AppBar>
+      <Drawer variant="permanent" open={open}>
         <Toolbar
           sx={{
-            pr: '24px', // keep right padding when drawer closed
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            px: [1],
           }}
         >
-          <IconButton // Drawer Menu Icon
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
-            sx={{
-              marginRight: '36px',
-              ...(open && { display: 'none' }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography // HerculexWeb
-            component="h1"
-            variant="h6"
-            color="inherit"
-            noWrap
-            sx={{flexGrow: 1,display: { xs: 'none', sm: 'flex'}}}
-          >
-            HerculexWeb
-          </Typography>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search OrderID…"
-              value={searchText}
-              onChange={handleSearchBarChange}
-              onKeyUp={handleKeyUp}
-            />
-          </Search>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-          <IconButton color='inherit' sx={{width: 30, height: 10, ml: 1}} onClick={e => setMenuIsOpen(true)}>
-            <ArrowDropDownIcon />
+          <IconButton onClick={toggleDrawer}>
+            <ChevronLeftIcon />
           </IconButton>
         </Toolbar>
-          <Menu
-            id="demo-positioned-menu"
-            aria-labelledby="demo-positioned-button"
-            open={menuIsOpen}
-            onClose = {e => setMenuIsOpen(false)}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <MenuItem>My Profile</MenuItem>
-            <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
-          </Menu>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <Toolbar
+        <Divider />
+        <Avatar 
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              px: [1],
-            }}
-          >
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <Avatar 
-              sx={{
-                width: open ? 80 : 40, 
-                height: open ? 80 : 40, 
-                margin: '32px auto 8px auto'}}
-              alt={auth.token_username?.toUpperCase()}
-              src="/static"
-              />
-            {open && <>
-              <Typography
-                component="h6"
-                variant="subtitle2"
-                color="inherit"
-                noWrap
-                align="center"
-              >
-                {auth.token_username}
-              </Typography>
-              <Typography
-                component="p"
-                variant="subtitle2"
-                color="inherit"
-                noWrap
-                align="center"
-              >
-                {(() => {
-                  switch (auth.token_role_id) {
-                    case 1:
-                      return 'Admin';
-                    case 2:
-                      return 'Designer';
-                    case 3:
-                      return 'Printer';
-                    case 4:
-                      return 'Packer';
-                    default:
-                      return '';
-                  }
-                })()}
-              </Typography>
-            </>}
-          <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {auth.token_role_id === 1 && secondaryListItems}
-          </List>
-        </Drawer>
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              <Outlet />
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
-        </Box>
+              width: open ? 80 : 40, 
+              height: open ? 80 : 40, 
+              margin: '32px auto 8px auto'}}
+            alt={auth.token_username?.toUpperCase()}
+            src="/static"
+            />
+          {open && <>
+            <Typography
+              component="h6"
+              variant="subtitle2"
+              color="inherit"
+              noWrap
+              align="center"
+            >
+              {auth.token_username}
+            </Typography>
+            <Typography
+              component="p"
+              variant="subtitle2"
+              color="inherit"
+              noWrap
+              align="center"
+            >
+              {(() => {
+                switch (auth.token_role_id) {
+                  case 1:
+                    return 'Admin';
+                  case 2:
+                    return 'Designer';
+                  case 3:
+                    return 'Printer';
+                  case 4:
+                    return 'Packer';
+                  default:
+                    return '';
+                }
+              })()}
+            </Typography>
+          </>}
+        <List component="nav">
+          {mainListItems}
+          <Divider sx={{ my: 1 }} />
+          {auth.token_role_id === 1 && secondaryListItems}
+        </List>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'light'
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: '100vh',
+          overflow: 'auto',
+        }}
+      >
+        <Toolbar />
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Grid container spacing={3}>
+            <Outlet />
+          </Grid>
+          <Copyright sx={{ pt: 4 }} />
+        </Container>
       </Box>
-    </ThemeProvider>
+    </Box>
   );
 }
