@@ -6,8 +6,8 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import dayjs from 'dayjs';
 import PhoneIcon from '@mui/icons-material/Phone';
 import EventIcon from '@mui/icons-material/Event';
-import LinkIcon from '@mui/icons-material/Link';
-import LinkOffIcon from '@mui/icons-material/LinkOff';
+import FolderIcon from '@mui/icons-material/Folder';
+import FolderOffIcon from '@mui/icons-material/FolderOff';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import useAuth from '../hooks/useAuth'
 import { ORDERDETAIL_ACTION_ROLE_ACCESS_MAPPING } from '../constants';
@@ -319,7 +319,6 @@ const OrderDetail = () => {
             {isAdmin && <Button 
               variant="contained"
               color="waColor"
-              startIcon={<WhatsAppIcon />}  
               disabled={!order.cust_phone_no}
               onClick={() => {
                 if (order.cust_phone_no) {
@@ -329,13 +328,12 @@ const OrderDetail = () => {
                 }
               }}
               >
-                {order.cust_phone_no ? "Go to Whatsapp" : "Cust Phone not set"}
+                <WhatsAppIcon />
             </Button>}
           </Grid>
           <Grid item>
             <Button 
               variant="contained" 
-              startIcon={order.google_folder_url ? <LinkIcon /> : <LinkOffIcon />} 
               disabled={!order.google_folder_url}
               onClick={() => {
                 if (order.google_folder_url) {
@@ -343,7 +341,7 @@ const OrderDetail = () => {
                 }
               }}
               >
-                {order.google_folder_url ? "Design Folder" : "Design not set"}
+                {order.google_folder_url ? <FolderIcon /> : <FolderOffIcon />}
             </Button>
           </Grid>
         </Grid>
@@ -370,11 +368,11 @@ const OrderDetail = () => {
       </Paper>
     </Grid>
 
-    <Grid item xs={12} sx={{height:'100%', maxHeight:'100px'}}> {/* Stepper */}
+    <Grid item xs={12}> {/* Stepper */}
         <Stepper activeStep={999} nonLinear alternativeLabel >
           {steps.map((label, index) => (
             <Step key={label} completed={completed[index]}>
-              <StepLabel>
+              <StepLabel sx={{ marginBottom: '10px' }}>
                 {label}<br/>
                 {index === 0 && order.initial_input_dt && new Date(order.initial_input_dt).toLocaleString()}
                 {index === 1 && order.design_sub_dt && new Date(order.design_sub_dt).toLocaleString()}
