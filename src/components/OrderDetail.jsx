@@ -27,6 +27,7 @@ const OrderDetail = () => {
   const { order_id } = useParams()
   const [order, setOrder] = useState({})
   const [orderItems, setOrderItems] = useState([{}])
+  const [orderTrackings, setOrderTrackings] = useState([{}])
   const [numberSubmitted, setNumberSubmitted] = useState(0)
   const [completed, setCompleted] = useState({
     0: false, // Initial Input
@@ -198,6 +199,7 @@ const OrderDetail = () => {
         console.log(response.data)
         isMounted && setOrder(response.data.order_data)
         isMounted && setOrderItems(response.data.order_items_data)
+        isMounted && setOrderTrackings(response.data.order_trackings)
 
         const {
           cust_phone_no,
@@ -268,6 +270,18 @@ const OrderDetail = () => {
   }
 
   const hasAccess = (buttonLabel) => ORDERDETAIL_ACTION_ROLE_ACCESS_MAPPING[auth.token_role_id]?.includes(buttonLabel);
+
+  const convertToGMTPlus7 = (utcDate) => {
+    const utcDateTime = new Date(utcDate);
+    const year = utcDateTime.getUTCFullYear();
+    const month = String(utcDateTime.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(utcDateTime.getUTCDate()).padStart(2, '0');
+    const hour = String(utcDateTime.getUTCHours()).padStart(2, '0');
+    const minute = String(utcDateTime.getUTCMinutes()).padStart(2, '0');
+    const second = String(utcDateTime.getUTCSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  };
 
   // OrderDetail Actions Button Visibility
   const isAdmin = auth.token_role_id === 1
@@ -426,31 +440,14 @@ const OrderDetail = () => {
     <Grid item xs={12}> {/* Order History */}
       <Paper sx={{p:2}}>
         <Typography variant="h5" gutterBottom>Order History</Typography>
-
-        <Paper sx={{p:1, mb:2}}>
-          <Typography variant="body1">Customer Phone Number was set to 021-xxxxxxx and Deadline was set to 2023-Jan-31.</Typography>
-          <Typography variant="body2" gutterBottom>Admin | 2023-01-31 23:59:59</Typography>
-        </Paper>
-
-        <Paper sx={{p:1, mb:2}}>
-          <Typography variant="body1">Customer Phone Number was set to 021-xxxxxxx and Deadline was set to 2023-Jan-31.</Typography>
-          <Typography variant="body2" gutterBottom>Admin | 2023-01-31 23:59:59</Typography>
-        </Paper>
-
-        <Paper sx={{p:1, mb:2}}>
-          <Typography variant="body1">Customer Phone Number was set to 021-xxxxxxx and Deadline was set to 2023-Jan-31.</Typography>
-          <Typography variant="body2" gutterBottom>Admin | 2023-01-31 23:59:59</Typography>
-        </Paper>
-
-        <Paper sx={{p:1, mb:2}}>
-          <Typography variant="body1">Customer Phone Number was set to 021-xxxxxxx and Deadline was set to 2023-Jan-31.</Typography>
-          <Typography variant="body2" gutterBottom>Admin | 2023-01-31 23:59:59</Typography>
-        </Paper>
-
-        <Paper sx={{p:1}}>
-          <Typography variant="body1">Customer Phone Number was set to 021-xxxxxxx and Deadline was set to 2023-Jan-31.</Typography>
-          <Typography variant="body2" gutterBottom>Admin | 2023-01-31 23:59:59</Typography>
-        </Paper>
+        {orderTrackings.map((row) => (
+          <Paper sx={{p:1, mb:2}}>
+            <Typography variant="body1">{row.activity_msg}</Typography>
+            <Typography variant="body2" gutterBottom>
+              {row.user_name ? row.user_name : '<Deleted User>'} | {convertToGMTPlus7(row.activity_date)}
+            </Typography>
+          </Paper>
+        ))}     
       </Paper>
     </Grid>
 
