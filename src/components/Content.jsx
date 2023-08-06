@@ -19,10 +19,13 @@ const Content = () => {
           signal: controller.signal
         })
 
-        // console.log(response.data)
-        isMounted && setOrders(response.data)
+        if (isMounted) {
+          setOrders(response.data);
+        }
       } catch (err) {
-        console.error(err)
+        if (!controller.signal.aborted) {
+          console.error(err);
+        }
       }
     }
 
@@ -115,8 +118,10 @@ const Content = () => {
             <TableBody>
               {sortedOrders.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell component={Link} to={`/order/${row.id}`}>
-                    {row.id}
+                  <TableCell>
+                    <Link to={`/order/${row.id}`}>
+                      {row.id}
+                    </Link>
                   </TableCell>
                   <TableCell>{row.ecom_order_id}</TableCell>
                   <TableCell>{row.feeding_dt}</TableCell>

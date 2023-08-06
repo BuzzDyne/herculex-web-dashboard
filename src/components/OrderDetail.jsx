@@ -251,7 +251,7 @@ const OrderDetail = () => {
 
   const openCloseDialog = (dialogName, isOpening) => {
     if (dialogName === 'input') {
-      setIdpPhone(order.cust_phone_no)
+      setIdpPhone(order.cust_phone_no || '')
 
       if (!order.user_deadline_dt) {
         setidpDeadline(dayjs().add(5, 'day'))
@@ -409,8 +409,8 @@ const OrderDetail = () => {
       <Paper sx={{p:2}}>
       <Typography variant="h5" gutterBottom>Order Items</Typography>
         <Grid container spacing={2}>
-          {orderItems.map((row) => (
-            <>
+          {orderItems.map((row, index) => (
+            <React.Fragment key={index}>
               <Grid item xs={2} sm={2} md={1} lg={1}> {/* Item Image */}
                 <Box 
                   sx={{
@@ -435,7 +435,7 @@ const OrderDetail = () => {
                 <Typography variant='subtitle1'>{row.product_name}</Typography>
                 <Typography variant='body1'>{row.quantity} x Rp{row.product_price?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}</Typography>
               </Grid>
-            </>
+            </React.Fragment>
           ))}
 
         </Grid>
@@ -445,8 +445,8 @@ const OrderDetail = () => {
     <Grid item xs={12}> {/* Order History */}
       <Paper sx={{p:2}}>
         <Typography variant="h5" gutterBottom>Order History</Typography>
-        {orderTrackings.map((row) => (
-          <Paper sx={{p:1, mb:2}}>
+        {orderTrackings.map((row, index) => (
+          <Paper key={index} sx={{p:1, mb:2}}>
             <Typography variant="body1">{row.activity_msg}</Typography>
             <Typography variant="body2" gutterBottom>
               {row.user_name ? row.user_name : '<Deleted User>'} | {convertToGMTPlus7(row.activity_date)}

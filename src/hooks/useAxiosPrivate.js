@@ -35,8 +35,6 @@ const useAxiosPrivate = () => {
           return axiosPrivate(prevRequest)
         }
 
-        console.log(error);
-
         return Promise.reject(error)
       }
     )
