@@ -47,8 +47,9 @@ const Login = () => {
 
       const token_username    = decodedData.sub 
       const token_role_id     = decodedData.role_id
+      const token_user_id     = decodedData.user_id
 
-      setAuth({token_username, token_role_id, accessToken, refreshToken})
+      setAuth({token_user_id, token_username, token_role_id, accessToken, refreshToken})
 
       setUsername('')
       setPwd('')

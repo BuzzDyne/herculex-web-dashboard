@@ -70,7 +70,8 @@ const OrderDetail = () => {
       try {
         await axiosPrivate.patch(`/api_order/id/${order.id}`, {
           cust_phone_no: idpPhone,
-          user_deadline_dt: dateString
+          user_deadline_dt: dateString,
+          user_id: auth.token_user_id,
         });
 
         // Close the registration dialog
@@ -115,7 +116,8 @@ const OrderDetail = () => {
       try {
         await axiosPrivate.patch(`/api_order/id/${order.id}/submit_url`, {
           folder_url      : sdpFolderUrl,
-          thumb_file_url  : sdpFileForThumbUrl
+          thumb_file_url  : sdpFileForThumbUrl,
+          user_id         : auth.token_user_id,
         });
 
         // Close the registration dialog
@@ -136,7 +138,8 @@ const OrderDetail = () => {
 
     try {
       await axiosPrivate.patch(`/api_order/id/${order.id}/submit_design_acc`, {
-        date: null
+        date: null,
+        user_id: auth.token_user_id,
       });
 
       openCloseDialog('design', false);
@@ -155,7 +158,8 @@ const OrderDetail = () => {
 
     try {
       await axiosPrivate.patch(`/api_order/id/${order.id}/submit_print_done`, {
-        date: null
+        date: null,
+        user_id: auth.token_user_id,
       });
 
       openCloseDialog('print', false);
@@ -174,7 +178,8 @@ const OrderDetail = () => {
 
     try {
       await axiosPrivate.patch(`/api_order/id/${order.id}/submit_packing_done`, {
-        date: null
+        date: null,
+        user_id: auth.token_user_id,
       });
 
       openCloseDialog('packing', false);
@@ -273,12 +278,12 @@ const OrderDetail = () => {
 
   const convertToGMTPlus7 = (utcDate) => {
     const utcDateTime = new Date(utcDate);
-    const year = utcDateTime.getUTCFullYear();
-    const month = String(utcDateTime.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(utcDateTime.getUTCDate()).padStart(2, '0');
-    const hour = String(utcDateTime.getUTCHours()).padStart(2, '0');
-    const minute = String(utcDateTime.getUTCMinutes()).padStart(2, '0');
-    const second = String(utcDateTime.getUTCSeconds()).padStart(2, '0');
+    const year = utcDateTime.getFullYear();
+    const month = String(utcDateTime.getMonth() + 1).padStart(2, '0');
+    const day = String(utcDateTime.getDate()).padStart(2, '0');
+    const hour = String(utcDateTime.getHours()).padStart(2, '0');
+    const minute = String(utcDateTime.getMinutes()).padStart(2, '0');
+    const second = String(utcDateTime.getSeconds()).padStart(2, '0');
 
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   };
@@ -288,7 +293,7 @@ const OrderDetail = () => {
   const showInitialInputButton  = !completed[0] && hasAccess('Input Data')                        
   const showDesignSubmitButton  = hasAccess('Submit Design Link') && ((isAdmin && !completed[1]) || (!isAdmin && !completed[1] && completed[0]))
   const showDesignEditButton    = hasAccess('Edit Design Link') && (completed[1] && !completed[2])
-  const showDesignApproveButton = hasAccess('Approve Design') && completed[1]
+  const showDesignApproveButton = hasAccess('Approve Design') && completed[1] && !completed[2] && isAdmin
   const showPrintingDoneButton  = hasAccess('Printing Done') && ((isAdmin && !completed[3]) || (!isAdmin && !completed[3] && completed[2]))
   const showPackingDoneButton   = hasAccess('Packing Done') && ((isAdmin && !completed[4]) || (!isAdmin && !completed[4] && completed[3]))
 
