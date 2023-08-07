@@ -21,7 +21,6 @@ const steps = [
   'Order Shipped'
 ]
 
-
 const OrderDetail = () => {
   const { auth } = useAuth()
   const { order_id } = useParams()
@@ -288,6 +287,21 @@ const OrderDetail = () => {
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return ''; // Return empty string if the date is not provided
+    const date = new Date(dateString);
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
+  
+    const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds} ${ampm}`;
+    return formattedDate;
+  };
+
   // OrderDetail Actions Button Visibility
   const isAdmin = auth.token_role_id === 1
   const showInitialInputButton  = !completed[0] && hasAccess('Input Data')                        
@@ -393,12 +407,12 @@ const OrderDetail = () => {
             <Step key={label} completed={completed[index]}>
               <StepLabel sx={{ marginBottom: '10px' }}>
                 {label}<br/>
-                {index === 0 && order.initial_input_dt && new Date(order.initial_input_dt).toLocaleString()}
-                {index === 1 && order.design_sub_dt && new Date(order.design_sub_dt).toLocaleString()}
-                {index === 2 && order.design_acc_dt && new Date(order.design_acc_dt).toLocaleString()}
-                {index === 3 && order.print_done_dt && new Date(order.print_done_dt).toLocaleString()}
-                {index === 4 && order.packing_done_dt && new Date(order.packing_done_dt).toLocaleString()}
-                {index === 5 && order.shipped_dt && new Date(order.shipped_dt).toLocaleString()}
+                {index === 0 && order.initial_input_dt && formatDate(order.initial_input_dt)}
+                {index === 1 && order.design_sub_dt && formatDate(order.design_sub_dt)}
+                {index === 2 && order.design_acc_dt && formatDate(order.design_acc_dt)}
+                {index === 3 && order.print_done_dt && formatDate(order.print_done_dt)}
+                {index === 4 && order.packing_done_dt && formatDate(order.packing_done_dt)}
+                {index === 5 && order.shipped_dt && formatDate(order.shipped_dt)}
               </StepLabel>
             </Step>
           ))}
