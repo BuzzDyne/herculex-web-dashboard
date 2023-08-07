@@ -46,7 +46,7 @@ const OrderDetail = () => {
   // Initial Data Prompt
   const [isInputDialogOpen, setIsInputDialogOpen]     = useState(false)
   const [idpPhone, setIdpPhone] = useState('')
-  const [idpDeadline, setidpDeadline] = useState(null)
+  const [idpDeadline, setidpDeadline] = useState()
   const [idpErrors, setIdpErrors] = useState({})
 
   const handleIdpSubmit = async (event) => {
@@ -63,14 +63,14 @@ const OrderDetail = () => {
     setIdpErrors(errors);
 
     var d = new Date(idpDeadline)
-    var dateString = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+    var dateString = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`
 
     // If there are no errors, proceed with API Hit
     if (Object.keys(errors).length === 0) {
       try {
         await axiosPrivate.patch(`/api_order/id/${order.id}`, {
           cust_phone_no: idpPhone,
-          user_deadline_dt: dateString,
+          user_deadline_prd: dateString,
           user_id: auth.token_user_id,
         });
 
@@ -208,7 +208,7 @@ const OrderDetail = () => {
 
         const {
           cust_phone_no,
-          user_deadline_dt,
+          user_deadline_prd,
           design_sub_dt,
           design_acc_dt,
           print_done_dt,
@@ -217,7 +217,7 @@ const OrderDetail = () => {
         } = response.data.order_data;
   
         setCompleted({
-          0: cust_phone_no !== null && user_deadline_dt !== null,
+          0: cust_phone_no !== null && user_deadline_prd !== null,
           1: design_sub_dt !== null,
           2: design_acc_dt !== null,
           3: print_done_dt !== null,
@@ -253,10 +253,10 @@ const OrderDetail = () => {
     if (dialogName === 'input') {
       setIdpPhone(order.cust_phone_no || '')
 
-      if (!order.user_deadline_dt) {
+      if (!order.user_deadline_prd) {
         setidpDeadline(dayjs().add(5, 'day'))
       } else {
-        setidpDeadline(dayjs(new Date(order.user_deadline_dt)))
+        setidpDeadline(dayjs(order.user_deadline_prd, 'YYYYMMDD'))
       }
 
       setIsInputDialogOpen(isOpening)
@@ -331,7 +331,7 @@ const OrderDetail = () => {
           <PhoneIcon sx={{ marginRight: '0.5em', verticalAlign: 'middle'  }} />: {order.cust_phone_no ? order.cust_phone_no : '-'}
         </p>
         <p sx={{ display: 'flex', alignItems: 'center' }}>
-          <EventIcon sx={{ marginRight: '0.5em', verticalAlign: 'middle'  }} />: {order.user_deadline_dt ? order.user_deadline_dt.substring(0, 10) : '-'}
+          <EventIcon sx={{ marginRight: '0.5em', verticalAlign: 'middle'  }} />: {order.user_deadline_prd ? dayjs(order.user_deadline_prd).format('YYYY-MM-DD') : '-'}
         </p>
         <Grid container spacing={0.5} marginTop={'auto'} justifyContent="flex-start">
           <Grid item>

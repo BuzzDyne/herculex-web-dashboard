@@ -1,5 +1,5 @@
 import { React, useState} from 'react'
-import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -111,8 +111,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const defaultTheme = createTheme();
-
 export default function Dashboard() {
   const [open, setOpen] = useState(false)
   const [menuIsOpen, setMenuIsOpen] = useState(false)
@@ -205,23 +203,23 @@ export default function Dashboard() {
           <ArrowDropDownIcon />
         </IconButton>
       </Toolbar>
-        <Menu
-          id="demo-positioned-menu"
-          aria-labelledby="demo-positioned-button"
-          open={menuIsOpen}
-          onClose = {e => setMenuIsOpen(false)}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-        >
-          <MenuItem>My Profile</MenuItem>
-          <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
-        </Menu>
+      <Menu
+        id="demo-positioned-menu"
+        aria-labelledby="demo-positioned-button"
+        open={menuIsOpen}
+        onClose = {e => setMenuIsOpen(false)}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem>My Profile</MenuItem>
+        <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
+      </Menu>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <Toolbar
