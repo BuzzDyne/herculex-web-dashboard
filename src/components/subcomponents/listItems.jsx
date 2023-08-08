@@ -5,6 +5,9 @@ import ListItemText from '@mui/material/ListItemText';
 // import ListSubheader from '@mui/material/ListSubheader';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import DesignServicesIcon from '@mui/icons-material/DesignServices';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import PrintIcon from '@mui/icons-material/Print';
 import AbcIcon from '@mui/icons-material/Abc';
 import { Link } from 'react-router-dom';
 
@@ -14,25 +17,31 @@ export const mainListItems = (
       <ListItemIcon>
         <DashboardIcon/>
       </ListItemIcon>
-      <ListItemText primary="Dashboard" />
+      <ListItemText primary="Active Tasks" />
     </ListItemButton>
     <ListItemButton component={Link} to="/admin">
       <ListItemIcon>
-        <AbcIcon />
+        <DashboardIcon/>
       </ListItemIcon>
-      <ListItemText primary="Admin" />
+      <ListItemText primary="All Orders" />
     </ListItemButton>
     <ListItemButton component={Link} to="/designer">
       <ListItemIcon>
-        <AbcIcon />
+        <DesignServicesIcon />
       </ListItemIcon>
       <ListItemText primary="Design" />
     </ListItemButton>
     <ListItemButton component={Link} to="/printer">
       <ListItemIcon>
-        <AbcIcon />
+        <PrintIcon />
       </ListItemIcon>
       <ListItemText primary="Printer" />
+    </ListItemButton>
+    <ListItemButton component={Link} to="/packer">
+      <ListItemIcon>
+        <UnarchiveIcon />
+      </ListItemIcon>
+      <ListItemText primary="Packer" />
     </ListItemButton>
   </React.Fragment>
 );
@@ -47,6 +56,18 @@ export const secondaryListItems = (
         <PeopleAltIcon />
       </ListItemIcon>
       <ListItemText primary="User Management" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemIcon>
+        <AbcIcon />
+      </ListItemIcon>
+      <ListItemText primary="Analytics" />
+    </ListItemButton>
+    <ListItemButton>
+      <ListItemIcon>
+        <AbcIcon />
+      </ListItemIcon>
+      <ListItemText primary="User Profile" />
     </ListItemButton>
     <ListItemButton component={Link} to="/testpage">
       <ListItemIcon>

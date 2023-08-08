@@ -253,7 +253,7 @@ const OrderDetail = () => {
       setIdpPhone(order.cust_phone_no || '')
 
       if (!order.user_deadline_prd) {
-        setidpDeadline(dayjs().add(5, 'day'))
+        setidpDeadline(dayjs().add(2, 'week'))
       } else {
         setidpDeadline(dayjs(order.user_deadline_prd, 'YYYYMMDD'))
       }
