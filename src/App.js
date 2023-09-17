@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom'
 import Login from "./components/Login"
 import Content from "./components/Content";
 import UserManagement from "./components/UserManagement";
+import SystemMonitoring from "./components/SystemMonitoring";
 import OrderDetail from "./components/OrderDetail";
 import DashboardV2 from "./components/DashboardV2";
 import OrdersPage from "./components/subcomponents/OrdersPage";
@@ -24,6 +25,7 @@ function App() {
 
       <Route path="/" element={<DashboardV2 />}>
         <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+          <Route path="/system_monitor" element={<SystemMonitoring />} />          
           <Route path="/user_management" element={<UserManagement />} />          
           <Route path="/admin" element={<Content title={'All Orders'} apiAddress={'/api_order/get_all_orders'}/>} />
         </Route>

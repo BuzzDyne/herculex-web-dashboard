@@ -6,6 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import DesignServicesIcon from '@mui/icons-material/DesignServices';
+import SettingsIcon from '@mui/icons-material/Settings';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import PrintIcon from '@mui/icons-material/Print';
 import AbcIcon from '@mui/icons-material/Abc';
@@ -57,11 +58,11 @@ export const secondaryListItems = (
       </ListItemIcon>
       <ListItemText primary="User Management" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/system_monitor">
       <ListItemIcon>
-        <AbcIcon />
+        <SettingsIcon />
       </ListItemIcon>
-      <ListItemText primary="Analytics" />
+      <ListItemText primary="System Monitoring" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
